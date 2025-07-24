@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role Management</title>
+    
+    <!-- Fonts and Icons from Google CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+    <style>
+        /* ------------------------- */
+        /* --- DESIGN SYSTEM & SETUP --- */
+        /* ------------------------- */
+        :root {
+            --primary-color: #007a3d;
+            --secondary-color: #fdd835;
+            --accent-color: #92278f;
+            --text-primary-color: #212121;
+            --text-secondary-color: #6b6b6b;
+            --background-color: #ffffff;
+            --body-bg-color: #f7f7f7;
+            --border-color: #eeeeee;
+            --warning-color: #f57c00;
+
+            /* Typography */
+            --font-family-primary: 'Poppins', sans-serif;
+            --font-family-secondary: 'Open Sans', sans-serif;
+            --h2-font-size: 36px;
+            --h3-font-size: 28px;
+            --body-font-size: 16px;
+
+            /* Layout & Components */
+            --max-width: 1200px;
+            --card-border-radius: 8px;
+            --card-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            --card-padding: 24px;
+            --button-border-radius: 6px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family-secondary);
+            background-color: var(--body-bg-color);
+            color: var(--text-primary-color);
+            line-height: 1.6;
+            font-size: var(--body-font-size);
+            padding: 32px 16px;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+
+        /* ------------------------- */
+        /* --- MATERIAL ICONS --- */
+        /* ------------------------- */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+            line-height: 1;
+        }
+        
+        /* ------------------------- */
+        /* --- MAIN LAYOUT & CARD --- */
+        /* ------------------------- */
+        .main-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            background: var(--background-color);
+            border-radius: var(--card-border-radius);
+            box-shadow: var(--card-box-shadow);
+            padding: var(--card-padding);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .card-header h3 {
+            font-family: var(--font-family-primary);
+            font-size: var(--h3-font-size);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header h3 .material-symbols-outlined {
+            color: var(--primary-color);
+            font-size: 32px;
+        }
+
+        /* ------------------------- */
+        /* --- BUTTONS --- */
+        /* ------------------------- */
+        .btn {
+            border: none;
+            border-radius: var(--button-border-radius);
+            padding: 12px 24px;
+            font-family: var(--font-family-secondary);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.3s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:hover { opacity: 0.9; }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+        }
+
+        .btn-secondary, .btn-stroked {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        
+        .btn-icon {
+            background: none; padding: 8px; border-radius: 50%; line-height: 1;
+        }
+        .btn-icon:hover { background-color: rgba(0,0,0,0.05); }
+        .btn-icon .material-symbols-outlined { color: var(--text-secondary-color); }
+        .btn-icon.edit .material-symbols-outlined { color: var(--primary-color); }
+
+        /* ------------------------- */
+        /* --- DATA TABLE --- */
+        /* ------------------------- */
+        .table-container { width: 100%; overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .data-table th { font-family: var(--font-family-primary); font-weight: 600; color: var(--text-secondary-color); font-size: 14px; text-transform: uppercase; }
+        .data-table td { color: var(--text-primary-color); }
+        .data-table .actions-cell { text-align: right; white-space: nowrap; }
+        .empty-state { text-align: center; padding: 48px; color: var(--text-secondary-color); }
+        
+        /* ------------------------- */
+        /* --- CREATE/EDIT VIEW --- */
+        /* ------------------------- */
+        .role-edit-view .page-header {
+            font-family: var(--font-family-primary);
+            font-size: var(--h2-font-size);
+            margin-bottom: 24px;
+        }
+        .details-card {
+             background: var(--background-color);
+             border-radius: var(--card-border-radius);
+             box-shadow: var(--card-box-shadow);
+             padding: var(--card-padding);
+             margin-bottom: 24px;
+        }
+        .action-bar {
+            padding-top: 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+        }
+        
+        /* Accordion for Permissions */
+        .permission-assignment-card h4 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 22px;
+        }
+        .accordion-item {
+            border: 1px solid var(--border-color);
+            border-radius: var(--button-border-radius);
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        .accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            cursor: pointer;
+            background-color: #f9f9f9;
+        }
+        .accordion-header:hover { background-color: #f1f1f1; }
+        .accordion-header h5 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--font-family-primary);
+            font-weight: 600;
+        }
+        .accordion-header .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .accordion-item.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            background: var(--background-color);
+            padding: 0 16px;
+        }
+        .accordion-item.active .accordion-content {
+           padding: 16px;
+        }
+        
+        /* Custom Checkbox */
+        .permission-checkbox {
+            display: block;
+            position: relative;
+            padding-left: 35px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            font-size: var(--body-font-size);
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .permission-checkbox input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 20px;
+            width: 20px;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .permission-checkbox:hover input ~ .checkmark { background-color: #ccc; }
+        .permission-checkbox input:checked ~ .checkmark { background-color: var(--primary-color); border-color: var(--primary-color); }
+        .checkmark:after { content: ""; position: absolute; display: none; }
+        .permission-checkbox input:checked ~ .checkmark:after { display: block; }
+        .permission-checkbox .checkmark:after {
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+
+        /* ------------------------- */
+        /* --- DIALOG / MODAL --- */
+        /* ------------------------- */
+        .dialog-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
+        .dialog-backdrop.visible { opacity: 1; visibility: visible; }
+        .dialog-content { background: var(--background-color); border-radius: var(--card-border-radius); padding: var(--card-padding); width: 90%; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transform: scale(0.9); transition: transform 0.3s; }
+        .dialog-backdrop.visible .dialog-content { transform: scale(1); }
+        .dialog-header { font-family: var(--font-family-primary); font-size: 22px; margin-bottom: 24px; }
+        .dialog-body { margin-bottom: 24px; color: var(--text-secondary-color); }
+        .dialog-actions { display: flex; justify-content: flex-end; gap: 12px; }
+        .dialog-content.delete-confirm .dialog-header { display: flex; align-items: center; gap: 16px; }
+        .dialog-content.delete-confirm .material-symbols-outlined { color: var(--warning-color); font-size: 28px; }
+
+        /* ------------------------- */
+        /* --- FORM FIELDS --- */
+        /* ------------------------- */
+        .form-field { margin-bottom: 20px; }
+        .form-field label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary-color); font-size: 14px; }
+        .form-field input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: var(--button-border-radius); font-size: var(--body-font-size); font-family: var(--font-family-secondary); transition: border-color 0.3s; }
+        .form-field input:focus { outline: none; border-color: var(--primary-color); }
+
+        /* ------------------------- */
+        /* --- RESPONSIVENESS --- */
+        /* ------------------------- */
+        @media (max-width: 768px) {
+            .data-table thead { display: none; }
+            .data-table, .data-table tbody, .data-table tr, .data-table td { display: block; width: 100%; }
+            .data-table tr { margin-bottom: 16px; border: 1px solid var(--border-color); border-radius: var(--card-border-radius); padding: 16px; }
+            .data-table td { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border: none; text-align: right; }
+            .data-table td::before { content: attr(data-label); font-weight: 600; color: var(--text-secondary-color); text-align: left; padding-right: 16px; }
+            .data-table .actions-cell { justify-content: flex-end; }
+            .data-table .actions-cell::before { display: none; }
+            .role-edit-view .page-header { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LIST VIEW -->
+    <div id="role-list-view">
+        <div class="main-container">
+            <header class="card-header">
+                <h3>
+                    <span class="material-symbols-outlined">admin_panel_settings</span>
+                    Role Management
+                </h3>
+                <button id="add-role-btn" class="btn btn-primary">
+                    <span class="material-symbols-outlined">add</span>
+                    Add New Role
+                </button>
+            </header>
+
+            <section class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Role Name</th>
+                            <th>Description</th>
+                            <th class="actions-cell">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="role-table-body">
+                        <!-- JS will populate this -->
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+    
+    <!-- CREATE/EDIT VIEW -->
+    <div id="role-edit-view" class="hidden">
+        <div class="role-edit-view">
+             <h2 class="page-header" id="edit-view-title">Create New Role</h2>
+             <div class="details-card">
+                 <form id="role-form">
+                    <input type="hidden" id="role-id">
+                    <div class="form-field">
+                        <label for="role-name">Role Name</label>
+                        <input type="text" id="role-name" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="role-description">Description</label>
+                        <input type="text" id="role-description" required>
+                    </div>
+                 </form>
+             </div>
+             
+             <div class="details-card permission-assignment-card">
+                 <h4>
+                    <span class="material-symbols-outlined">checklist</span>
+                    Assign Permissions
+                 </h4>
+                 <div id="permission-accordion">
+                    <!-- JS will build the accordion here -->
+                 </div>
+             </div>
+             
+             <div class="action-bar">
+                 <button id="cancel-edit-btn" class="btn btn-stroked">Cancel</button>
+                 <button id="save-role-btn" class="btn btn-primary">Save Role</button>
+             </div>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Dialog -->
+    <div id="delete-dialog" class="dialog-backdrop">
+        <div class="dialog-content delete-confirm">
+            <h4 class="dialog-header">
+                 <span class="material-symbols-outlined">warning_amber</span>
+                 Delete Role
+            </h4>
+            <div class="dialog-body">
+                <p>Are you sure you want to delete this role? This might affect assigned users.</p>
+            </div>
+            <div class="dialog-actions">
+                <button id="cancel-delete-btn" class="btn btn-secondary">Cancel</button>
+                <button id="confirm-delete-btn" class="btn btn-primary">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- SHARED LOCALSTORAGE KEYS ---
+            const MODULE_DATA_KEY = 'modules';
+            const PERMISSION_DATA_KEY = 'permissions';
+            const ROLE_DATA_KEY = 'roles';
+
+            // --- DOM REFERENCES ---
+            // Views
+            const listView = document.getElementById('role-list-view');
+            const editView = document.getElementById('role-edit-view');
+            
+            // List View
+            const addRoleBtn = document.getElementById('add-role-btn');
+            const roleTableBody = document.getElementById('role-table-body');
+            
+            // Edit View
+            const editViewTitle = document.getElementById('edit-view-title');
+            const roleIdInput = document.getElementById('role-id');
+            const roleNameInput = document.getElementById('role-name');
+            const roleDescriptionInput = document.getElementById('role-description');
+            const permissionAccordion = document.getElementById('permission-accordion');
+            const saveRoleBtn = document.getElementById('save-role-btn');
+            const cancelEditBtn = document.getElementById('cancel-edit-btn');
+            
+            // Delete Dialog
+            const deleteDialog = document.getElementById('delete-dialog');
+            const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+            const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+            
+            let roles = [];
+            let modules = [];
+            let permissions = [];
+            let editingRoleId = null;
+            let roleToDeleteId = null;
+
+            // --- DATA MANAGEMENT ---
+            const getModules = () => JSON.parse(localStorage.getItem(MODULE_DATA_KEY) || '[]');
+            const getPermissions = () => JSON.parse(localStorage.getItem(PERMISSION_DATA_KEY) || '[]');
+            
+            const getRoles = () => {
+                const stored = localStorage.getItem(ROLE_DATA_KEY);
+                if (stored) return JSON.parse(stored);
+                const defaults = [
+                    { id: 'r1', name: 'Super Administrator', description: 'Has access to all features.', permissionIds: ['p1', 'p2', 'p3'] },
+                    { id: 'r2', name: 'Support Staff', description: 'Can only view users.', permissionIds: ['p1'] }
+                ];
+                saveRoles(defaults);
+                return defaults;
+            };
+            const saveRoles = (data) => localStorage.setItem(ROLE_DATA_KEY, JSON.stringify(data));
+
+            // --- UI RENDERING & VIEW MANAGEMENT ---
+            const showView = (viewName) => {
+                listView.classList.toggle('hidden', viewName !== 'list');
+                editView.classList.toggle('hidden', viewName !== 'edit');
+            };
+
+            const renderRoleList = () => {
+                roleTableBody.innerHTML = '';
+                if (roles.length === 0) {
+                    roleTableBody.innerHTML = `<tr><td colspan="3" class="empty-state">No roles found.</td></tr>`;
+                    return;
+                }
+                roles.forEach(role => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td data-label="Role Name">${role.name}</td>
+                        <td data-label="Description">${role.description}</td>
+                        <td class="actions-cell">
+                            <button class="btn btn-icon edit" data-id="${role.id}" title="Edit Role"><span class="material-symbols-outlined">edit</span></button>
+                            <button class="btn btn-icon delete" data-id="${role.id}" title="Delete Role"><span class="material-symbols-outlined">delete_outline</span></button>
+                        </td>
+                    `;
+                    roleTableBody.appendChild(row);
+                });
+            };
+            
+            const renderEditView = () => {
+                const role = editingRoleId ? roles.find(r => r.id === editingRoleId) : null;
+                
+                // Set header and form fields
+                editViewTitle.textContent = role ? `Edit Role: ${role.name}` : 'Create New Role';
+                roleIdInput.value = role ? role.id : '';
+                roleNameInput.value = role ? role.name : '';
+                roleDescriptionInput.value = role ? role.description : '';
+
+                // Build accordion
+                permissionAccordion.innerHTML = '';
+                const sortedModules = [...modules].sort((a,b) => a.sortOrder - b.sortOrder);
+
+                sortedModules.forEach(module => {
+                    const modulePermissions = permissions.filter(p => p.moduleId === module.id);
+                    if (modulePermissions.length === 0) return;
+
+                    const item = document.createElement('div');
+                    item.className = 'accordion-item';
+                    
+                    let permissionCheckboxesHTML = '';
+                    modulePermissions.forEach(p => {
+                        const isChecked = role?.permissionIds.includes(p.id) ? 'checked' : '';
+                        permissionCheckboxesHTML += `
+                            <label class="permission-checkbox"> ${p.displayName}
+                                <input type="checkbox" value="${p.id}" ${isChecked}>
+                                <span class="checkmark"></span>
+                            </label>`;
+                    });
+
+                    item.innerHTML = `
+                        <div class="accordion-header">
+                            <h5><span class="material-symbols-outlined">manage_accounts</span>${module.name}</h5>
+                            <span class="material-symbols-outlined toggle-icon">expand_more</span>
+                        </div>
+                        <div class="accordion-content">
+                           ${permissionCheckboxesHTML}
+                        </div>`;
+                    permissionAccordion.appendChild(item);
+                });
+                
+                showView('edit');
+            };
+
+            // --- DIALOG MANAGEMENT ---
+            const openDialog = (el) => el.classList.add('visible');
+            const closeDialog = (el) => el.classList.remove('visible');
+
+            // --- EVENT HANDLERS ---
+            addRoleBtn.addEventListener('click', () => {
+                editingRoleId = null;
+                renderEditView();
+            });
+
+            roleTableBody.addEventListener('click', e => {
+                const editBtn = e.target.closest('button.edit');
+                if (editBtn) {
+                    editingRoleId = editBtn.dataset.id;
+                    renderEditView();
+                }
+                const deleteBtn = e.target.closest('button.delete');
+                if (deleteBtn) {
+                    roleToDeleteId = deleteBtn.dataset.id;
+                    openDialog(deleteDialog);
+                }
+            });
+            
+            permissionAccordion.addEventListener('click', e => {
+                const header = e.target.closest('.accordion-header');
+                if (header) {
+                    const item = header.parentElement;
+                    item.classList.toggle('active');
+                    const content = item.querySelector('.accordion-content');
+                    if(item.classList.contains('active')) {
+                        content.style.maxHeight = content.scrollHeight + 32 + "px"; // 32px for padding
+                    } else {
+                        content.style.maxHeight = null;
+                    }
+                }
+            });
+
+            cancelEditBtn.addEventListener('click', () => showView('list'));
+
+            saveRoleBtn.addEventListener('click', () => {
+                const id = roleIdInput.value;
+                const name = roleNameInput.value;
+                const description = roleDescriptionInput.value;
+                
+                if (!name || !description) {
+                    alert("Role Name and Description are required.");
+                    return;
+                }
+
+                const checkedBoxes = permissionAccordion.querySelectorAll('input[type="checkbox"]:checked');
+                const selectedPermissionIds = Array.from(checkedBoxes).map(cb => cb.value);
+
+                if (id) { // Update
+                    const index = roles.findIndex(r => r.id === id);
+                    roles[index] = { ...roles[index], name, description, permissionIds: selectedPermissionIds };
+                } else { // Create
+                    const newRole = {
+                        id: 'r' + Date.now(),
+                        name,
+                        description,
+                        permissionIds: selectedPermissionIds
+                    };
+                    roles.push(newRole);
+                }
+                saveRoles(roles);
+                renderRoleList();
+                showView('list');
+            });
+            
+            // Delete Dialog Logic
+            cancelDeleteBtn.addEventListener('click', () => closeDialog(deleteDialog));
+            confirmDeleteBtn.addEventListener('click', () => {
+                if(roleToDeleteId) {
+                    roles = roles.filter(r => r.id !== roleToDeleteId);
+                    saveRoles(roles);
+                    renderRoleList();
+                    closeDialog(deleteDialog);
+                    roleToDeleteId = null;
+                }
+            });
+
+            // --- INITIALIZATION ---
+            const initializeApp = () => {
+                modules = getModules();
+                permissions = getPermissions();
+                roles = getRoles();
+                renderRoleList();
+                showView('list');
+            };
+
+            initializeApp();
+        });
+    </script>
+
+</body>
+</html>

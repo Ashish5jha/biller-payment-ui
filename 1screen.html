@@ -400,6 +400,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
+            const APP_DATA_KEY = 'modules';
+
             // --- DOM ELEMENT REFERENCES ---
             const addModuleBtn = document.getElementById('add-module-btn');
             const tableBody = document.getElementById('module-table-body');
@@ -423,22 +425,27 @@
             let moduleToDeleteId = null;
 
             // --- DATA MANAGEMENT (localStorage) ---
+            // This function is the SOURCE OF TRUTH for modules.
+            // It reads from localStorage or creates default data if it's the very first run.
             const getModules = () => {
-                const storedModules = localStorage.getItem('modules');
+                const storedModules = localStorage.getItem(APP_DATA_KEY);
                 if (storedModules) {
                     return JSON.parse(storedModules);
-                } else {
-                    // Pre-populate with some data if none exists
-                    return [
-                        { id: 'id1', name: 'Dashboard', description: 'The main dashboard view.', sortOrder: 1 },
-                        { id: 'id2', name: 'User Management', description: 'Manage users and roles.', sortOrder: 2 },
-                        { id: 'id3', name: 'Reporting', description: 'View and export reports.', sortOrder: 3 }
-                    ];
                 }
+                // Pre-populate with some data if none exists.
+                // This will only run once for the entire application.
+                const defaultData = [
+                    { id: 'm1', name: 'Dashboard', description: 'The main dashboard view.', sortOrder: 1 },
+                    { id: 'm2', name: 'User Management', description: 'Manage users and roles.', sortOrder: 2 },
+                    { id: 'm3', name: 'Reporting', description: 'View and export reports.', sortOrder: 3 }
+                ];
+                saveModules(defaultData); // Save the defaults so other screens can find them
+                return defaultData;
             };
 
+            // This function SAVES the master list of modules to localStorage.
             const saveModules = (data) => {
-                localStorage.setItem('modules', JSON.stringify(data));
+                localStorage.setItem(APP_DATA_KEY, JSON.stringify(data));
             };
 
             // --- UI RENDERING ---
@@ -452,7 +459,6 @@
                     return;
                 }
                 
-                // Sort modules by sortOrder before rendering
                 const sortedModules = [...modules].sort((a, b) => a.sortOrder - b.sortOrder);
 
                 sortedModules.forEach(module => {
@@ -475,13 +481,8 @@
             };
 
             // --- DIALOG MANAGEMENT ---
-            const openDialog = (dialogElement) => {
-                dialogElement.classList.add('visible');
-            };
-
-            const closeDialog = (dialogElement) => {
-                dialogElement.classList.remove('visible');
-            };
+            const openDialog = (dialogElement) => dialogElement.classList.add('visible');
+            const closeDialog = (dialogElement) => dialogElement.classList.remove('visible');
 
             const openAddDialog = () => {
                 moduleForm.reset();
@@ -509,14 +510,8 @@
 
             // --- EVENT LISTENERS ---
             addModuleBtn.addEventListener('click', openAddDialog);
-
             cancelBtn.addEventListener('click', () => closeDialog(moduleDialog));
-
-            moduleDialog.addEventListener('click', (e) => {
-                if (e.target === moduleDialog) { // Click on backdrop
-                    closeDialog(moduleDialog);
-                }
-            });
+            moduleDialog.addEventListener('click', (e) => e.target === moduleDialog && closeDialog(moduleDialog));
 
             moduleForm.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -524,14 +519,14 @@
                 const newModule = {
                     name: moduleNameInput.value,
                     description: moduleDescriptionInput.value,
-                    sortOrder: parseInt(moduleSortOrderInput.value)
+                    sortOrder: parseInt(moduleSortOrderInput.value, 10)
                 };
 
-                if (id) { // Editing existing module
+                if (id) {
                     const index = modules.findIndex(m => m.id === id);
                     modules[index] = { ...modules[index], ...newModule };
-                } else { // Adding new module
-                    newModule.id = 'id' + Date.now(); // Simple unique ID
+                } else {
+                    newModule.id = 'm' + Date.now();
                     modules.push(newModule);
                 }
 
@@ -543,21 +538,12 @@
             tableBody.addEventListener('click', (e) => {
                 const editButton = e.target.closest('button.edit');
                 const deleteButton = e.target.closest('button.delete');
-                
-                if (editButton) {
-                    openEditDialog(editButton.dataset.id);
-                } else if (deleteButton) {
-                    openDeleteDialog(deleteButton.dataset.id);
-                }
+                if (editButton) openEditDialog(editButton.dataset.id);
+                if (deleteButton) openDeleteDialog(deleteButton.dataset.id);
             });
 
             cancelDeleteBtn.addEventListener('click', () => closeDialog(deleteDialog));
-            
-            deleteDialog.addEventListener('click', (e) => {
-                if (e.target === deleteDialog) {
-                    closeDialog(deleteDialog);
-                }
-            });
+            deleteDialog.addEventListener('click', (e) => e.target === deleteDialog && closeDialog(deleteDialog));
             
             confirmDeleteBtn.addEventListener('click', () => {
                 if (moduleToDeleteId) {

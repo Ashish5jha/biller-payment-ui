@@ -159,6 +159,7 @@
             white-space: nowrap;
             margin-top: 25px;
             margin-left: -20px;
+            z-index: 1001;
         }
 
         /* ------------------------- */
@@ -418,6 +419,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
+            // --- SHARED LOCALSTORAGE KEYS ---
+            const MODULE_DATA_KEY = 'modules';
+            const PERMISSION_DATA_KEY = 'permissions';
+
             // --- DOM ELEMENT REFERENCES ---
             const addPermissionBtn = document.getElementById('add-permission-btn');
             const tableBody = document.getElementById('permission-table-body');
@@ -444,40 +449,32 @@
 
             // --- DATA MANAGEMENT (localStorage) ---
 
-            // Modules are needed for the dropdown. We simulate them being managed elsewhere.
+            // **MODIFIED**: This screen now ONLY READS modules. It does not create them.
+            // It assumes Screen 1.1 is the source of truth for module data.
             const getModules = () => {
-                const storedModules = localStorage.getItem('modules');
-                if (storedModules) {
-                    return JSON.parse(storedModules);
-                }
-                // Pre-populate modules if none exist
-                const defaultModules = [
-                    { id: 'm1', name: 'Dashboard', description: 'The main dashboard view.', sortOrder: 1 },
-                    { id: 'm2', name: 'User Management', description: 'Manage users and roles.', sortOrder: 2 },
-                    { id: 'm3', name: 'Reporting', description: 'View and export reports.', sortOrder: 3 },
-                    { id: 'm4', name: 'Biller Management', description: 'Onboard and manage billers.', sortOrder: 4 },
-                ];
-                localStorage.setItem('modules', JSON.stringify(defaultModules));
-                return defaultModules;
+                const storedModules = localStorage.getItem(MODULE_DATA_KEY);
+                // If Screen 1.1 hasn't been run, this will be empty, which is correct.
+                return storedModules ? JSON.parse(storedModules) : [];
             };
 
+            // This screen continues to manage its own list of permissions.
             const getPermissions = () => {
-                const storedPermissions = localStorage.getItem('permissions');
+                const storedPermissions = localStorage.getItem(PERMISSION_DATA_KEY);
                 if (storedPermissions) {
                     return JSON.parse(storedPermissions);
                 }
-                 // Pre-populate permissions if none exist
+                 // Pre-populate permissions if none exist, using IDs from the module defaults
                 const defaultPermissions = [
                      { id: 'p1', displayName: 'View Users', key: 'user.view', description: 'Can view the list of users.', moduleId: 'm2' },
                      { id: 'p2', displayName: 'Create Users', key: 'user.create', description: 'Can create new users.', moduleId: 'm2' },
                      { id: 'p3', displayName: 'View Biller Reports', key: 'report.view.biller', description: 'Can view biller-specific reports.', moduleId: 'm3' }
                 ];
-                localStorage.setItem('permissions', JSON.stringify(defaultPermissions));
+                savePermissions(defaultPermissions);
                 return defaultPermissions;
             };
 
             const savePermissions = (data) => {
-                localStorage.setItem('permissions', JSON.stringify(data));
+                localStorage.setItem(PERMISSION_DATA_KEY, JSON.stringify(data));
             };
 
             // --- UI RENDERING & HELPERS ---
@@ -493,7 +490,7 @@
                 
                 permissions.forEach(permission => {
                     const module = modules.find(m => m.id === permission.moduleId);
-                    const moduleName = module ? module.name : 'N/A';
+                    const moduleName = module ? module.name : 'N/A (Module Deleted)';
                     
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -514,7 +511,10 @@
             };
             
             const populateModuleDropdown = (selectedModuleId = null) => {
-                permissionModuleSelect.innerHTML = '<option value="" disabled selected>Select a module</option>';
+                permissionModuleSelect.innerHTML = '<option value="" disabled>Select a module</option>';
+                if (modules.length === 0) {
+                     permissionModuleSelect.innerHTML = '<option value="" disabled>No modules available. Please add a module first.</option>';
+                }
                 const sortedModules = [...modules].sort((a,b) => a.sortOrder - b.sortOrder);
                 sortedModules.forEach(module => {
                     const option = document.createElement('option');

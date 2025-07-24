@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    
+    <!-- Fonts and Icons from Google CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+    <style>
+        /* ------------------------- */
+        /* --- DESIGN SYSTEM & SETUP --- */
+        /* ------------------------- */
+        :root {
+            --primary-color: #007a3d;
+            --secondary-color: #fdd835;
+            --accent-color: #92278f;
+            --text-primary-color: #212121;
+            --text-secondary-color: #6b6b6b;
+            --background-color: #ffffff;
+            --body-bg-color: #f7f7f7;
+            --border-color: #eeeeee;
+            --status-active-bg: #e8f5e9; /* Light green */
+            --status-active-text: #2e7d32;
+            --status-inactive-bg: #f5f5f5; /* Light gray */
+            --status-inactive-text: #616161;
+
+            /* Typography */
+            --font-family-primary: 'Poppins', sans-serif;
+            --font-family-secondary: 'Open Sans', sans-serif;
+            --h3-font-size: 28px;
+            --body-font-size: 16px;
+
+            /* Layout & Components */
+            --max-width: 1200px;
+            --card-border-radius: 8px;
+            --card-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            --card-padding: 24px;
+            --button-border-radius: 6px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-family-secondary);
+            background-color: var(--body-bg-color);
+            color: var(--text-primary-color);
+            line-height: 1.6;
+            font-size: var(--body-font-size);
+            padding: 32px 16px;
+        }
+        
+        /* ------------------------- */
+        /* --- MATERIAL ICONS --- */
+        /* ------------------------- */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+            vertical-align: middle;
+            line-height: 1;
+        }
+        
+        /* ------------------------- */
+        /* --- MAIN LAYOUT & CARD --- */
+        /* ------------------------- */
+        .main-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            background: var(--background-color);
+            border-radius: var(--card-border-radius);
+            box-shadow: var(--card-box-shadow);
+            padding: var(--card-padding);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .card-header h3 {
+            font-family: var(--font-family-primary);
+            font-size: var(--h3-font-size);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header h3 .material-symbols-outlined {
+            color: var(--primary-color);
+            font-size: 32px;
+        }
+
+        /* ------------------------- */
+        /* --- BUTTONS & CHIPS --- */
+        /* ------------------------- */
+        .btn {
+            border: none;
+            border-radius: var(--button-border-radius);
+            padding: 12px 24px;
+            font-family: var(--font-family-secondary);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.3s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn:hover { opacity: 0.9; }
+        .btn-primary { background-color: var(--primary-color); color: var(--background-color); }
+        .btn-secondary { background-color: #e0e0e0; color: var(--text-primary-color); }
+        .btn-icon { background: none; padding: 8px; border-radius: 50%; line-height: 1; }
+        .btn-icon:hover { background-color: rgba(0,0,0,0.05); }
+        .btn-icon .material-symbols-outlined { color: var(--text-secondary-color); }
+        .btn-icon.edit .material-symbols-outlined { color: var(--primary-color); }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        .chip-list { display: flex; flex-wrap: wrap; gap: 8px; }
+        .chip.status-active { background-color: var(--status-active-bg); color: var(--status-active-text); }
+        .chip.status-active .material-symbols-outlined { color: var(--status-active-text); font-variation-settings: 'FILL' 1; }
+        .chip.status-inactive { background-color: var(--status-inactive-bg); color: var(--status-inactive-text); }
+        .chip.role-chip { background-color: var(--border-color); color: var(--text-secondary-color); }
+
+        /* ------------------------- */
+        /* --- DATA TABLE --- */
+        /* ------------------------- */
+        .table-container { width: 100%; overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .data-table th { font-family: var(--font-family-primary); font-weight: 600; color: var(--text-secondary-color); font-size: 14px; text-transform: uppercase; }
+        .data-table td { color: var(--text-primary-color); vertical-align: middle; }
+        .data-table .actions-cell { text-align: right; white-space: nowrap; }
+        .empty-state { text-align: center; padding: 48px; color: var(--text-secondary-color); }
+
+        /* ------------------------- */
+        /* --- DIALOG / MODAL --- */
+        /* ------------------------- */
+        .dialog-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s; }
+        .dialog-backdrop.visible { opacity: 1; visibility: visible; }
+        .dialog-content { background: var(--background-color); border-radius: var(--card-border-radius); padding: var(--card-padding); width: 90%; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transform: scale(0.9); transition: transform 0.3s; }
+        .dialog-backdrop.visible .dialog-content { transform: scale(1); }
+        .dialog-header { font-family: var(--font-family-primary); font-size: 22px; margin-bottom: 24px; }
+        .dialog-body { margin-bottom: 24px; color: var(--text-secondary-color); }
+        .dialog-actions { display: flex; justify-content: flex-end; gap: 12px; }
+
+        /* ------------------------- */
+        /* --- FORM FIELDS --- */
+        /* ------------------------- */
+        .form-field { margin-bottom: 20px; }
+        .form-field label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary-color); font-size: 14px; }
+        .form-field input, .form-field select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: var(--button-border-radius); font-size: var(--body-font-size); font-family: var(--font-family-secondary); transition: border-color 0.3s; }
+        .form-field input:focus, .form-field select:focus { outline: none; border-color: var(--primary-color); }
+        .form-field select[multiple] { height: 120px; padding: 12px; }
+        .form-field select[multiple] option { padding: 8px; }
+
+        /* ------------------------- */
+        /* --- RESPONSIVENESS --- */
+        /* ------------------------- */
+        @media (max-width: 768px) {
+            .data-table thead { display: none; }
+            .data-table, .data-table tbody, .data-table tr, .data-table td { display: block; width: 100%; }
+            .data-table tr { margin-bottom: 16px; border: 1px solid var(--border-color); border-radius: var(--card-border-radius); padding: 16px; }
+            .data-table td { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border: none; text-align: right; }
+            .data-table td::before { content: attr(data-label); font-weight: 600; color: var(--text-secondary-color); text-align: left; padding-right: 16px; }
+            .data-table .actions-cell { justify-content: flex-end; }
+            .data-table .actions-cell::before { display: none; }
+            .data-table .chip-list { justify-content: flex-end; max-width: 60%; }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="main-container">
+        <header class="card-header">
+            <h3>
+                <span class="material-symbols-outlined">manage_accounts</span>
+                User Account Management
+            </h3>
+            <button id="add-user-btn" class="btn btn-primary">
+                <span class="material-symbols-outlined">add</span>
+                Add New User
+            </button>
+        </header>
+
+        <section class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Roles</th>
+                        <th>Status</th>
+                        <th class="actions-cell">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="user-table-body">
+                    <!-- JS will populate this -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Add/Edit User Dialog -->
+    <div id="user-dialog" class="dialog-backdrop">
+        <div class="dialog-content">
+            <h4 id="dialog-title" class="dialog-header">Add New User</h4>
+            <div class="dialog-body">
+                <form id="user-form">
+                    <input type="hidden" id="user-id">
+                    <div class="form-field">
+                        <label for="user-name">Full Name</label>
+                        <input type="text" id="user-name" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="user-email">Email Address</label>
+                        <input type="email" id="user-email" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="user-roles">Roles</label>
+                        <select id="user-roles" multiple required>
+                            <!-- JS will populate roles -->
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="dialog-actions">
+                <button id="cancel-btn" class="btn btn-secondary">Cancel</button>
+                <button id="save-btn" type="submit" form="user-form" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- SHARED LOCALSTORAGE KEYS ---
+            const ROLE_DATA_KEY = 'roles';
+            const USER_DATA_KEY = 'users';
+
+            // --- DOM REFERENCES ---
+            const addUserBtn = document.getElementById('add-user-btn');
+            const tableBody = document.getElementById('user-table-body');
+            
+            // Dialog
+            const userDialog = document.getElementById('user-dialog');
+            const dialogTitle = document.getElementById('dialog-title');
+            const userForm = document.getElementById('user-form');
+            const userIdInput = document.getElementById('user-id');
+            const userNameInput = document.getElementById('user-name');
+            const userEmailInput = document.getElementById('user-email');
+            const userRolesSelect = document.getElementById('user-roles');
+            const cancelBtn = document.getElementById('cancel-btn');
+            const saveBtn = document.getElementById('save-btn');
+            
+            let users = [];
+            let roles = [];
+
+            // --- DATA MANAGEMENT ---
+            const getRoles = () => JSON.parse(localStorage.getItem(ROLE_DATA_KEY) || '[]');
+            
+            const getUsers = () => {
+                const stored = localStorage.getItem(USER_DATA_KEY);
+                if (stored) return JSON.parse(stored);
+                // Default data demonstrates links to default roles
+                const defaults = [
+                    { id: 'u1', name: 'Admin User', email: 'admin@svl.com', roleIds: ['r1'], isActive: true },
+                    { id: 'u2', name: 'Support User', email: 'support@svl.com', roleIds: ['r2'], isActive: true },
+                    { id: 'u3', name: 'Inactive User', email: 'inactive@svl.com', roleIds: ['r2'], isActive: false },
+                ];
+                saveUsers(defaults);
+                return defaults;
+            };
+            const saveUsers = (data) => localStorage.setItem(USER_DATA_KEY, JSON.stringify(data));
+
+            // --- UI RENDERING & HELPERS ---
+            const renderUserTable = () => {
+                tableBody.innerHTML = '';
+                if (users.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="5" class="empty-state">No users found.</td></tr>`;
+                    return;
+                }
+
+                users.forEach(user => {
+                    // Create Role Chips HTML
+                    const userRoles = user.roleIds.map(roleId => {
+                        const role = roles.find(r => r.id === roleId);
+                        return role ? `<span class="chip role-chip">${role.name}</span>` : '';
+                    }).join('');
+
+                    // Create Status Chip and Toggle Icon HTML
+                    const statusChip = user.isActive
+                        ? `<span class="chip status-active"><span class="material-symbols-outlined">check_circle</span> Active</span>`
+                        : `<span class="chip status-inactive"><span class="material-symbols-outlined">do_not_disturb_on</span> Inactive</span>`;
+                    
+                    const toggleIcon = user.isActive ? 'toggle_on' : 'toggle_off';
+                    const toggleTitle = user.isActive ? 'Disable User' : 'Enable User';
+                    
+                    // Create table row
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td data-label="Name">${user.name}</td>
+                        <td data-label="Email">${user.email}</td>
+                        <td data-label="Roles"><div class="chip-list">${userRoles || 'No Roles'}</div></td>
+                        <td data-label="Status">${statusChip}</td>
+                        <td class="actions-cell">
+                            <button class="btn btn-icon edit" data-id="${user.id}" title="Edit User"><span class="material-symbols-outlined">edit</span></button>
+                            <button class="btn btn-icon toggle-status" data-id="${user.id}" title="${toggleTitle}"><span class="material-symbols-outlined">${toggleIcon}</span></button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            };
+
+            const populateRoleMultiSelect = (selectedRoleIds = []) => {
+                userRolesSelect.innerHTML = '';
+                 if (roles.length === 0) {
+                     userRolesSelect.innerHTML = '<option disabled>No roles available. Please create roles first.</option>';
+                     return;
+                 }
+                roles.forEach(role => {
+                    const option = document.createElement('option');
+                    option.value = role.id;
+                    option.textContent = role.name;
+                    if (selectedRoleIds.includes(role.id)) {
+                        option.selected = true;
+                    }
+                    userRolesSelect.appendChild(option);
+                });
+            };
+
+            // --- DIALOG MANAGEMENT ---
+            const openDialog = (el) => el.classList.add('visible');
+            const closeDialog = (el) => el.classList.remove('visible');
+
+            const openAddUserDialog = () => {
+                userForm.reset();
+                userIdInput.value = '';
+                dialogTitle.textContent = 'Add New User';
+                populateRoleMultiSelect();
+                openDialog(userDialog);
+            };
+
+            const openEditUserDialog = (id) => {
+                const user = users.find(u => u.id === id);
+                if (user) {
+                    dialogTitle.textContent = 'Edit User';
+                    userIdInput.value = user.id;
+                    userNameInput.value = user.name;
+                    userEmailInput.value = user.email;
+                    populateRoleMultiSelect(user.roleIds);
+                    openDialog(userDialog);
+                }
+            };
+            
+            // --- EVENT HANDLERS ---
+            addUserBtn.addEventListener('click', openAddUserDialog);
+            cancelBtn.addEventListener('click', () => closeDialog(userDialog));
+            userDialog.addEventListener('click', (e) => e.target === userDialog && closeDialog(userDialog));
+
+            userForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = userIdInput.value;
+                const selectedOptions = Array.from(userRolesSelect.selectedOptions).map(opt => opt.value);
+
+                const userData = {
+                    name: userNameInput.value,
+                    email: userEmailInput.value,
+                    roleIds: selectedOptions,
+                };
+                
+                if (!userData.name || !userData.email) {
+                    alert('Name and Email are required.');
+                    return;
+                }
+
+                if (id) { // Editing
+                    const index = users.findIndex(u => u.id === id);
+                    users[index] = { ...users[index], ...userData };
+                } else { // Adding
+                    userData.id = 'u' + Date.now();
+                    userData.isActive = true; // New users are active by default
+                    users.push(userData);
+                }
+                saveUsers(users);
+                renderUserTable();
+                closeDialog(userDialog);
+            });
+
+            tableBody.addEventListener('click', e => {
+                const editBtn = e.target.closest('button.edit');
+                if (editBtn) {
+                    openEditUserDialog(editBtn.dataset.id);
+                }
+
+                const toggleBtn = e.target.closest('button.toggle-status');
+                if (toggleBtn) {
+                    const id = toggleBtn.dataset.id;
+                    const user = users.find(u => u.id === id);
+                    if (user) {
+                        const action = user.isActive ? 'disable' : 'enable';
+                        if (confirm(`Are you sure you want to ${action} this user?`)) {
+                             user.isActive = !user.isActive;
+                             saveUsers(users);
+                             renderUserTable();
+                        }
+                    }
+                }
+            });
+
+            // --- INITIALIZATION ---
+            const initializeApp = () => {
+                roles = getRoles();
+                users = getUsers();
+                renderUserTable();
+            };
+
+            initializeApp();
+        });
+    </script>
+</body>
+</html>
