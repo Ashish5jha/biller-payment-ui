@@ -120,7 +120,7 @@
         .btn-warning { background-color: transparent; color: var(--warning-color); border: 1px solid var(--warning-color); }
 
         .chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 16px; font-size: 14px; font-weight: 600; }
-        .chip-pending { background-color: var(--status-pending-bg); color: var(--status-pending-text); }
+        .chip-pending-approval { background-color: var(--status-pending-bg); color: var(--status-pending-text); }
         .chip-active { background-color: var(--status-active-bg); color: var(--status-active-text); }
         .chip-inactive { background-color: var(--status-inactive-bg); color: var(--status-inactive-text); }
         .chip-rejected { background-color: var(--status-rejected-bg); color: var(--status-rejected-text); }
@@ -187,61 +187,69 @@
 </head>
 <body>
 
-    <main class="main-container">
-        <!-- HEADER -->
-        <div class="page-header-container">
-            <div class="page-header">
-                <div>
-                    <h2 id="biller-name-header">Biller Name</h2>
-                    <div id="biller-status-chip"></div>
+    <div id="biller-profile-page">
+        <main class="main-container">
+            <!-- HEADER -->
+            <div class="page-header-container">
+                <div class="page-header">
+                    <div>
+                        <h2 id="biller-name-header"></h2>
+                        <div id="biller-status-chip"></div>
+                    </div>
                 </div>
+                <div id="action-bar-container" class="action-bar"></div>
             </div>
-            <div id="action-bar-container" class="action-bar"></div>
-        </div>
-        
-        <!-- TABS -->
-        <div class="tabs-container">
-            <div class="tab-bar">
-                <div class="tab-link active" data-tab="profile">
-                    <span class="material-symbols-outlined">person</span> Profile Details
+            
+            <!-- TABS -->
+            <div class="tabs-container">
+                <div class="tab-bar">
+                    <div class="tab-link active" data-tab="profile">
+                        <span class="material-symbols-outlined">person</span> Profile Details
+                    </div>
+                    <div class="tab-link" data-tab="documents">
+                        <span class="material-symbols-outlined">folder_open</span> Documents
+                    </div>
+                    <div class="tab-link" data-tab="activity">
+                        <span class="material-symbols-outlined">history</span> Activity Log
+                    </div>
                 </div>
-                <div class="tab-link" data-tab="documents">
-                    <span class="material-symbols-outlined">folder_open</span> Documents
-                </div>
-                <div class="tab-link" data-tab="activity">
-                    <span class="material-symbols-outlined">history</span> Activity Log
-                </div>
-            </div>
 
-            <!-- TAB CONTENT -->
-            <div id="tab-content-profile" class="tab-content">
-                <div class="content-section">
-                    <h4>Business Details</h4>
-                    <div class="info-grid" id="business-details-content"></div>
+                <!-- TAB CONTENT -->
+                <div id="tab-content-profile" class="tab-content">
+                    <div class="content-section">
+                        <h4>Business Details</h4>
+                        <div class="info-grid" id="business-details-content"></div>
+                    </div>
+                    <div class="content-section">
+                        <h4>Primary Contact</h4>
+                        <div class="info-grid" id="contact-details-content"></div>
+                    </div>
+                     <div class="content-section">
+                        <h4>Banking Information</h4>
+                        <div class="info-grid" id="banking-details-content"></div>
+                    </div>
+                    <div class="action-bar hidden" id="edit-mode-actions">
+                        <button class="btn btn-stroked" id="cancel-edit-btn">Cancel</button>
+                        <button class="btn btn-primary" id="save-edit-btn">Save Changes</button>
+                    </div>
                 </div>
-                <div class="content-section">
-                    <h4>Primary Contact</h4>
-                    <div class="info-grid" id="contact-details-content"></div>
-                </div>
-                 <div class="content-section">
-                    <h4>Banking Information</h4>
-                    <div class="info-grid" id="banking-details-content"></div>
-                </div>
-                <div class="action-bar hidden" id="edit-mode-actions">
-                    <button class="btn btn-stroked" id="cancel-edit-btn">Cancel</button>
-                    <button class="btn btn-primary" id="save-edit-btn">Save Changes</button>
-                </div>
-            </div>
 
-            <div id="tab-content-documents" class="tab-content hidden">
-                <ul class="document-list" id="document-list-content"></ul>
-            </div>
+                <div id="tab-content-documents" class="tab-content hidden">
+                    <ul class="document-list" id="document-list-content"></ul>
+                </div>
 
-            <div id="tab-content-activity" class="tab-content hidden">
-                 <ul class="activity-log" id="activity-log-content"></ul>
+                <div id="tab-content-activity" class="tab-content hidden">
+                     <ul class="activity-log" id="activity-log-content"></ul>
+                </div>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
+
+    <!-- NOT FOUND MESSAGE -->
+    <div id="not-found-message" class="hidden" style="text-align: center; padding: 40px;">
+        <h1>Biller Not Found</h1>
+        <p style="margin-top: 16px;">The requested biller could not be found. Please ensure the ID in the URL is correct or onboard a new biller using Screen 2.2.</p>
+    </div>
 
     <!-- Confirmation Dialog -->
     <div id="confirm-dialog" class="dialog-backdrop">
@@ -264,6 +272,8 @@
             let currentConfirmAction = null;
 
             // --- DOM REFERENCES ---
+            const pageContainer = document.getElementById('biller-profile-page');
+            const notFoundMessage = document.getElementById('not-found-message');
             const billerNameHeader = document.getElementById('biller-name-header');
             const statusChipContainer = document.getElementById('biller-status-chip');
             const actionBar = document.getElementById('action-bar-container');
@@ -297,17 +307,18 @@
                     biller.fullData.activityLog = [];
                 }
                 biller.fullData.activityLog.unshift({
-                    message,
+                    message: `Admin action: ${message}`,
                     timestamp: new Date().toISOString()
                 });
             };
 
             // --- UI RENDERING ---
+            const showBillerNotFound = () => {
+                pageContainer.classList.add('hidden');
+                notFoundMessage.classList.remove('hidden');
+            };
+
             const renderPage = (biller) => {
-                if (!biller) {
-                    document.body.innerHTML = '<h1>Biller not found</h1><p>Please use Screen 2.2 to onboard a biller first, or check the ID in the URL.</p><a href="#">Back to Dashboard (Stub)</a>';
-                    return;
-                }
                 // Header
                 billerNameHeader.textContent = biller.businessName || biller.name;
                 const statusClass = biller.status.toLowerCase().replace(/ /g, '-');
@@ -361,8 +372,8 @@
                 if(isEditMode) {
                    const accountNumberInput = profileContent.banking.querySelector('#edit-account-number');
                    if (accountNumberInput) {
-                       accountNumberInput.value = data['account-number']; // Show full number only in edit mode
-                       accountNumberInput.disabled = false;
+                       accountNumberInput.value = data['account-number']; // Show full number in edit mode
+                       accountNumberInput.placeholder = "Enter new account number";
                    }
                 }
                 editModeActions.classList.toggle('hidden', !isEditMode);
@@ -374,7 +385,7 @@
                     : files.map(file => `
                         <li class="document-item">
                             <span>${file.name}</span>
-                            <button class="download-btn" title="Download"><span class="material-symbols-outlined">file_download</span></button>
+                            <button class="download-btn" title="Download (Simulated)"><span class="material-symbols-outlined">file_download</span></button>
                         </li>`).join('');
             };
 
@@ -400,8 +411,10 @@
             });
 
             actionBar.addEventListener('click', (e) => {
-                const targetId = e.target.closest('button')?.id;
-                switch (targetId) {
+                const button = e.target.closest('button');
+                if (!button) return;
+                
+                switch (button.id) {
                     case 'approve-btn':
                         currentConfirmAction = 'approve';
                         confirmTitle.textContent = 'Approve Biller';
@@ -469,6 +482,7 @@
                 });
                 
                 billers[billerIndex].fullData = updatedData;
+                // Sync top-level properties for Screen 2.1
                 billers[billerIndex].businessName = updatedData['business-name'];
                 billers[billerIndex].trn = updatedData.trn;
                 
@@ -483,17 +497,16 @@
             const initializeApp = () => {
                 const urlParams = new URLSearchParams(window.location.search);
                 currentBillerId = urlParams.get('id');
-                
                 billers = getBillers();
-                
-                if (!currentBillerId && billers.length > 0) {
-                    currentBillerId = billers.find(b => b.status === 'Pending Approval')?.id || billers[0].id;
-                }
-                
                 currentBiller = billers.find(b => b.id === currentBillerId);
+                
+                if (!currentBiller) {
+                    showBillerNotFound();
+                    return;
+                }
 
-                if (currentBiller && !currentBiller.fullData.activityLog) {
-                     logActivity(currentBiller, 'Profile created.');
+                if (!currentBiller.fullData.activityLog) {
+                     logActivity(currentBiller, 'Profile created via onboarding wizard.');
                      saveBillers(billers);
                 }
 
