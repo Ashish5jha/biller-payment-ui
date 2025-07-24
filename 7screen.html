@@ -170,9 +170,10 @@
         /* Review Section */
         .review-section { margin-bottom: 24px; }
         .review-section h4 { font-family: var(--font-family-primary); margin-bottom: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; }
-        .review-item { display: flex; justify-content: space-between; padding: 4px 0; }
-        .review-item .label { font-weight: 600; color: var(--text-secondary-color); }
-
+        .review-item { display: flex; justify-content: space-between; padding: 4px 0; flex-wrap: wrap; }
+        .review-item .label { font-weight: 600; color: var(--text-secondary-color); padding-right: 8px; }
+        .review-item .value { text-align: right; word-break: break-all; }
+        
         /* ------------------------- */
         /* --- NAVIGATION --- */
         /* ------------------------- */
@@ -198,7 +199,7 @@
             <!-- Step 1: Business Details -->
             <div id="step-1" class="stepper-step active">
                 <div class="step-header">
-                    <span class="step-icon"><span class="material-symbols-outlined">info_outline</span></span>
+                    <!-- <span class="step-icon"><span class="material-symbols-outlined">info_outline</span></span> -->
                     <span class="step-title">Business Details</span>
                 </div>
                 <div class="step-content">
@@ -308,23 +309,28 @@
                 const storedData = localStorage.getItem(ONBOARDING_KEY);
                 onboardingData = storedData ? JSON.parse(storedData) : { files: [] };
                 
-                // Pre-fill forms
-                Object.keys(onboardingData).forEach(key => {
-                    const input = document.getElementById(key);
-                    if (input) input.value = onboardingData[key];
+                // Pre-fill all forms on load
+                document.querySelectorAll('.stepper-container form').forEach(form => {
+                    form.querySelectorAll('input').forEach(input => {
+                        if (onboardingData[input.id]) {
+                            input.value = onboardingData[input.id];
+                        }
+                    });
                 });
                 renderFileList();
             };
 
+            // This is the robust way to save data from the current step's form
             const saveStepData = () => {
                 const activeForm = document.querySelector(`#step-${currentStep} form`);
                 if (activeForm) {
-                    const formData = new FormData(activeForm);
-                    for (let [key, value] of formData.entries()) {
-                         const inputEl = document.getElementById(key); // Get element by id to map
-                         if (inputEl) onboardingData[inputEl.id] = value;
-                    }
+                    activeForm.querySelectorAll('input').forEach(input => {
+                        if (input.id) { // Only save inputs with an ID
+                            onboardingData[input.id] = input.value;
+                        }
+                    });
                 }
+                // Files are handled separately and are already in onboardingData
                 localStorage.setItem(ONBOARDING_KEY, JSON.stringify(onboardingData));
             };
 
@@ -341,15 +347,17 @@
                     trn: onboardingData.trn,
                     onboardingDate: new Date().toISOString().split('T')[0],
                     status: 'Pending Approval',
-                    // Store all other data for screen 2.3
+                    // Store the complete, detailed data object for use in Screen 2.3
                     fullData: { ...onboardingData } 
                 };
+                
                 allBillers.push(newBiller);
                 localStorage.setItem(BILLER_DATA_KEY, JSON.stringify(allBillers));
                 clearOnboardingData();
                 
-                alert(`Biller "${newBiller.businessName}" submitted for approval!\nRedirecting to details page... (Stub)`);
-                // In a real app, you would redirect: window.location.href = `/billers/${newBiller.id}`;
+                alert(`Biller "${newBiller.businessName}" submitted for approval!\nRedirecting to details page...`);
+                // This simulates the navigation to Screen 2.3 by passing the new biller's ID as a URL parameter
+                window.location.href = `biller-profile.html?id=${newBiller.id}`;
             };
             
             // --- UI & STEPPER LOGIC ---
@@ -383,22 +391,22 @@
                 reviewContent.innerHTML = `
                     <div class="review-section">
                         <h4>Business Details</h4>
-                        <div class="review-item"><span class="label">Business Name:</span> <span>${onboardingData['business-name'] || ''}</span></div>
-                        <div class="review-item"><span class="label">TRN:</span> <span>${onboardingData.trn || ''}</span></div>
-                        <div class="review-item"><span class="label">Address:</span> <span>${onboardingData.address || ''}, ${onboardingData.city || ''}, ${onboardingData.parish || ''}</span></div>
+                        <div class="review-item"><span class="label">Business Name:</span> <span class="value">${onboardingData['business-name'] || 'N/A'}</span></div>
+                        <div class="review-item"><span class="label">TRN:</span> <span class="value">${onboardingData.trn || 'N/A'}</span></div>
+                        <div class="review-item"><span class="label">Address:</span> <span class="value">${onboardingData.address || ''}, ${onboardingData.city || ''}, ${onboardingData.parish || ''}</span></div>
                     </div>
                     <div class="review-section">
                         <h4>Primary Contact</h4>
-                        <div class="review-item"><span class="label">Full Name:</span> <span>${onboardingData['contact-name'] || ''}</span></div>
-                        <div class="review-item"><span class="label">Email:</span> <span>${onboardingData['contact-email'] || ''}</span></div>
-                        <div class="review-item"><span class="label">Phone:</span> <span>${onboardingData['contact-phone'] || ''}</span></div>
-                        <div class="review-item"><span class="label">Job Title:</span> <span>${onboardingData['contact-title'] || ''}</span></div>
+                        <div class="review-item"><span class="label">Full Name:</span> <span class="value">${onboardingData['contact-name'] || 'N/A'}</span></div>
+                        <div class="review-item"><span class="label">Email:</span> <span class="value">${onboardingData['contact-email'] || 'N/A'}</span></div>
+                        <div class="review-item"><span class="label">Phone:</span> <span class="value">${onboardingData['contact-phone'] || 'N/A'}</span></div>
+                        <div class="review-item"><span class="label">Job Title:</span> <span class="value">${onboardingData['contact-title'] || 'N/A'}</span></div>
                     </div>
                     <div class="review-section">
                         <h4>Banking Information</h4>
-                        <div class="review-item"><span class="label">Bank Name:</span> <span>${onboardingData['bank-name'] || ''}</span></div>
-                        <div class="review-item"><span class="label">Account Holder:</span> <span>${onboardingData['account-holder'] || ''}</span></div>
-                        <div class="review-item"><span class="label">Account Number:</span> <span>****${(onboardingData['account-number'] || '').slice(-4)}</span></div>
+                        <div class="review-item"><span class="label">Bank Name:</span> <span class="value">${onboardingData['bank-name'] || 'N/A'}</span></div>
+                        <div class="review-item"><span class="label">Account Holder:</span> <span class="value">${onboardingData['account-holder'] || 'N/A'}</span></div>
+                        <div class="review-item"><span class="label">Account Number:</span> <span class="value">****${(onboardingData['account-number'] || '').slice(-4)}</span></div>
                     </div>
                     <div class="review-section">
                         <h4>Documents</h4>
@@ -410,22 +418,24 @@
             // --- FILE HANDLING ---
             const renderFileList = () => {
                 fileList.innerHTML = '';
-                onboardingData.files.forEach((file, index) => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `
-                        <span>${file.name}</span>
-                        <button class="file-delete-btn" data-index="${index}" title="Remove file">
-                            <span class="material-symbols-outlined">delete</span>
-                        </button>
-                    `;
-                    fileList.appendChild(li);
-                });
+                if (onboardingData.files) {
+                    onboardingData.files.forEach((file, index) => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <span>${file.name}</span>
+                            <button class="file-delete-btn" data-index="${index}" title="Remove file">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        `;
+                        fileList.appendChild(li);
+                    });
+                }
             };
             
             // --- EVENT LISTENERS ---
             backBtn.addEventListener('click', () => {
                 if (currentStep > 1) {
-                    saveStepData(); // Save current step before going back
+                    saveStepData();
                     goToStep(currentStep - 1);
                 }
             });
@@ -456,6 +466,7 @@
             });
 
             fileInput.addEventListener('change', (e) => {
+                if (!onboardingData.files) onboardingData.files = [];
                 for (const file of e.target.files) {
                     onboardingData.files.push({ name: file.name, size: file.size, type: file.type });
                 }
