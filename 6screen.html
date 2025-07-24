@@ -261,6 +261,14 @@
 
             const BILLER_DATA_KEY = 'billers';
 
+            // --- NAVIGATION UTILITY ---
+            const navigateToScreen = (screenNumber) => {
+                const currentPath = window.location.pathname;
+                const currentDir = currentPath.substring(0, currentPath.lastIndexOf('/'));
+                const newPath = `${currentDir}/${screenNumber}screen.html`;
+                window.location.href = newPath;
+            };
+
             // --- DOM REFERENCES ---
             const onboardBillerBtn = document.getElementById('onboard-biller-btn');
             const searchInput = document.getElementById('search-input');
@@ -338,9 +346,8 @@
             searchInput.addEventListener('input', applyFilters);
             statusFilter.addEventListener('change', applyFilters);
             
-            onboardBillerBtn.addEventListener('click', () => {
-                // In a real app, this would navigate to Screen 2.2
-                alert("Navigating to Onboard New Biller screen... (Stub)");
+              onboardBillerBtn.addEventListener('click', () => {
+                navigateToScreen(7); // Navigate to 7screen.html
             });
 
             tableBody.addEventListener('click', e => {
@@ -348,7 +355,7 @@
                 if (viewBtn) {
                     const billerId = viewBtn.dataset.id;
                     // In a real app, this would navigate to Screen 2.3 with the billerId
-                    alert(`Viewing details for Biller ID: ${billerId} (Stub)`);
+                    navigateToScreen(8);
                 }
             });
 

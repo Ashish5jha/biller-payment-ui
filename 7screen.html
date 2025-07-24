@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboard New Biller</title>
+    
+    <!-- Fonts and Icons from Google CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+    <style>
+        /* ------------------------- */
+        /* --- DESIGN SYSTEM & SETUP --- */
+        /* ------------------------- */
+        :root {
+            /* Branding Colors */
+            --primary-color: #007a3d;
+            --secondary-color: #fdd835;
+            --accent-color: #92278f;
+            --text-primary-color: #212121;
+            --text-secondary-color: #6b6b6b;
+            --background-color: #ffffff;
+            --body-bg-color: #f7f7f7;
+            --border-color: #eeeeee;
+            --disabled-color: #bdbdbd;
+
+            /* Typography */
+            --font-family-primary: 'Poppins', sans-serif;
+            --font-family-secondary: 'Open Sans', sans-serif;
+            --h2-font-size: 36px;
+            --body-font-size: 16px;
+
+            /* Layout & Components */
+            --max-width: 900px;
+            --card-border-radius: 8px;
+            --card-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            --card-padding: 24px;
+            --button-border-radius: 6px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-family-secondary);
+            background-color: var(--body-bg-color);
+            color: var(--text-primary-color);
+            line-height: 1.6;
+            font-size: var(--body-font-size);
+            padding: 32px 16px;
+        }
+        
+        /* ------------------------- */
+        /* --- MATERIAL ICONS --- */
+        /* ------------------------- */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+            line-height: 1;
+        }
+
+        /* ------------------------- */
+        /* --- MAIN LAYOUT --- */
+        /* ------------------------- */
+        .main-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        .page-header {
+            font-family: var(--font-family-primary);
+            font-size: var(--h2-font-size);
+            margin-bottom: 24px;
+            font-weight: 700;
+        }
+        .stepper-container {
+            background: var(--background-color);
+            border-radius: var(--card-border-radius);
+            box-shadow: var(--card-box-shadow);
+            padding: var(--card-padding);
+        }
+
+        /* ------------------------- */
+        /* --- VERTICAL STEPPER --- */
+        /* ------------------------- */
+        .stepper-step {
+            margin-bottom: 16px;
+        }
+        .step-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+        }
+        .step-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--border-color);
+            color: var(--text-secondary-color);
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+        .step-title {
+            font-family: var(--font-family-primary);
+            font-weight: 600;
+            font-size: 18px;
+        }
+        .step-content {
+            border-left: 2px solid var(--border-color);
+            margin-left: 15px;
+            padding-left: 31px;
+            padding-top: 16px;
+            padding-bottom: 16px;
+            overflow: hidden;
+            display: none;
+        }
+
+        /* Stepper States */
+        .stepper-step.active .step-icon {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+        }
+        .stepper-step.active .step-title {
+            color: var(--primary-color);
+        }
+        .stepper-step.active .step-content {
+            display: block;
+        }
+        .stepper-step.completed .step-icon {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+        }
+        .stepper-step.completed .step-header {
+            cursor: pointer;
+        }
+        
+        /* ------------------------- */
+        /* --- FORM & COMPONENTS --- */
+        /* ------------------------- */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .form-field { margin-bottom: 20px; }
+        .form-field label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary-color); font-size: 14px; }
+        .form-field input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: var(--button-border-radius); font-size: var(--body-font-size); font-family: var(--font-family-secondary); transition: border-color 0.3s; }
+        .form-field input:focus { outline: none; border-color: var(--primary-color); }
+        .form-field.full-width { grid-column: 1 / -1; }
+
+        /* File Upload */
+        .file-upload-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: 1px solid var(--primary-color);
+            border-radius: var(--button-border-radius);
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+        #file-upload-input { display: none; }
+        #file-list { list-style: none; margin-top: 16px; }
+        #file-list li { display: flex; align-items: center; justify-content: space-between; padding: 8px; border-radius: 4px; background: #f9f9f9; margin-bottom: 8px; }
+        .file-delete-btn { background: none; border: none; cursor: pointer; color: var(--text-secondary-color); }
+        .file-delete-btn:hover { color: #c62828; }
+
+        /* Review Section */
+        .review-section { margin-bottom: 24px; }
+        .review-section h4 { font-family: var(--font-family-primary); margin-bottom: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; }
+        .review-item { display: flex; justify-content: space-between; padding: 4px 0; }
+        .review-item .label { font-weight: 600; color: var(--text-secondary-color); }
+
+        /* ------------------------- */
+        /* --- NAVIGATION --- */
+        /* ------------------------- */
+        .navigation-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+        }
+        .btn { border: none; border-radius: var(--button-border-radius); padding: 12px 24px; font-family: var(--font-family-secondary); font-weight: 600; font-size: 16px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.3s; }
+        .btn:hover { opacity: 0.9; }
+        .btn:disabled { background-color: var(--disabled-color); cursor: not-allowed; }
+        .btn-primary { background-color: var(--primary-color); color: var(--background-color); }
+        .btn-stroked { background-color: transparent; color: var(--text-primary-color); border: 1px solid #ccc; }
+
+    </style>
+</head>
+<body>
+
+    <main class="main-container">
+        <h2 class="page-header">Onboard New Biller</h2>
+
+        <div class="stepper-container">
+            <!-- Step 1: Business Details -->
+            <div id="step-1" class="stepper-step active">
+                <div class="step-header">
+                    <span class="step-icon"><span class="material-symbols-outlined">info_outline</span></span>
+                    <span class="step-title">Business Details</span>
+                </div>
+                <div class="step-content">
+                    <form id="form-1">
+                        <div class="form-grid">
+                            <div class="form-field"><label for="business-name">Business Name</label><input type="text" id="business-name" required></div>
+                            <div class="form-field"><label for="trn">TRN (Tax Registration Number)</label><input type="text" id="trn" required></div>
+                            <div class="form-field full-width"><label for="address">Business Address</label><input type="text" id="address" required></div>
+                            <div class="form-field"><label for="city">City</label><input type="text" id="city" required></div>
+                            <div class="form-field"><label for="parish">Parish</label><input type="text" id="parish" required></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Step 2: Primary Contact Information -->
+            <div id="step-2" class="stepper-step">
+                <div class="step-header">
+                    <span class="step-icon"><span class="material-symbols-outlined">person_outline</span></span>
+                    <span class="step-title">Primary Contact Information</span>
+                </div>
+                <div class="step-content">
+                    <form id="form-2">
+                        <div class="form-grid">
+                            <div class="form-field"><label for="contact-name">Full Name</label><input type="text" id="contact-name" required></div>
+                            <div class="form-field"><label for="contact-email">Email Address</label><input type="email" id="contact-email" required></div>
+                            <div class="form-field"><label for="contact-phone">Phone Number</label><input type="tel" id="contact-phone" required></div>
+                            <div class="form-field"><label for="contact-title">Job Title</label><input type="text" id="contact-title" required></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Step 3: Banking Information -->
+            <div id="step-3" class="stepper-step">
+                <div class="step-header">
+                    <span class="step-icon"><span class="material-symbols-outlined">account_balance</span></span>
+                    <span class="step-title">Banking Information</span>
+                </div>
+                <div class="step-content">
+                    <form id="form-3">
+                        <div class="form-grid">
+                            <div class="form-field"><label for="bank-name">Bank Name</label><input type="text" id="bank-name" required></div>
+                            <div class="form-field"><label for="bank-branch">Branch</label><input type="text" id="bank-branch" required></div>
+                            <div class="form-field full-width"><label for="account-holder">Account Holder Name</label><input type="text" id="account-holder" required></div>
+                            <div class="form-field full-width"><label for="account-number">Account Number</label><input type="text" id="account-number" required></div>
+                        </div>
+                        <p style="font-size: 14px; color: var(--text-secondary-color);">Disclaimer: All banking information is handled securely.</p>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Step 4: Document Upload -->
+            <div id="step-4" class="stepper-step">
+                <div class="step-header">
+                    <span class="step-icon"><span class="material-symbols-outlined">upload_file</span></span>
+                    <span class="step-title">Document Upload</span>
+                </div>
+                <div class="step-content">
+                    <p>Please upload the required documents (e.g., Business Registration Certificate, TRN Certificate).</p>
+                    <br>
+                    <label for="file-upload-input" class="file-upload-btn">Choose Files</label>
+                    <input type="file" id="file-upload-input" multiple>
+                    <ul id="file-list"></ul>
+                </div>
+            </div>
+
+            <!-- Step 5: Review & Submit -->
+            <div id="step-5" class="stepper-step">
+                <div class="step-header">
+                    <span class="step-icon"><span class="material-symbols-outlined">checklist</span></span>
+                    <span class="step-title">Review & Submit</span>
+                </div>
+                <div class="step-content" id="review-content">
+                    <!-- JS will populate this -->
+                </div>
+            </div>
+
+        </div>
+
+        <div class="navigation-bar">
+            <button id="back-btn" class="btn btn-stroked">Back</button>
+            <button id="next-btn" class="btn btn-primary">Next</button>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const BILLER_DATA_KEY = 'billers';
+            const ONBOARDING_KEY = 'onboardingBillerData';
+            const TOTAL_STEPS = 5;
+
+            // --- DOM REFERENCES ---
+            const steps = document.querySelectorAll('.stepper-step');
+            const backBtn = document.getElementById('back-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const fileInput = document.getElementById('file-upload-input');
+            const fileList = document.getElementById('file-list');
+            const reviewContent = document.getElementById('review-content');
+
+            let currentStep = 1;
+            let onboardingData = {};
+
+            // --- DATA MANAGEMENT ---
+            const loadDataFromStorage = () => {
+                const storedData = localStorage.getItem(ONBOARDING_KEY);
+                onboardingData = storedData ? JSON.parse(storedData) : { files: [] };
+                
+                // Pre-fill forms
+                Object.keys(onboardingData).forEach(key => {
+                    const input = document.getElementById(key);
+                    if (input) input.value = onboardingData[key];
+                });
+                renderFileList();
+            };
+
+            const saveStepData = () => {
+                const activeForm = document.querySelector(`#step-${currentStep} form`);
+                if (activeForm) {
+                    const formData = new FormData(activeForm);
+                    for (let [key, value] of formData.entries()) {
+                         const inputEl = document.getElementById(key); // Get element by id to map
+                         if (inputEl) onboardingData[inputEl.id] = value;
+                    }
+                }
+                localStorage.setItem(ONBOARDING_KEY, JSON.stringify(onboardingData));
+            };
+
+            const clearOnboardingData = () => {
+                localStorage.removeItem(ONBOARDING_KEY);
+                onboardingData = { files: [] };
+            };
+            
+            const submitFinalData = () => {
+                const allBillers = JSON.parse(localStorage.getItem(BILLER_DATA_KEY) || '[]');
+                const newBiller = {
+                    id: 'b' + Date.now(),
+                    businessName: onboardingData['business-name'],
+                    trn: onboardingData.trn,
+                    onboardingDate: new Date().toISOString().split('T')[0],
+                    status: 'Pending Approval',
+                    // Store all other data for screen 2.3
+                    fullData: { ...onboardingData } 
+                };
+                allBillers.push(newBiller);
+                localStorage.setItem(BILLER_DATA_KEY, JSON.stringify(allBillers));
+                clearOnboardingData();
+                
+                alert(`Biller "${newBiller.businessName}" submitted for approval!\nRedirecting to details page... (Stub)`);
+                // In a real app, you would redirect: window.location.href = `/billers/${newBiller.id}`;
+            };
+            
+            // --- UI & STEPPER LOGIC ---
+            const updateUI = () => {
+                steps.forEach((step, index) => {
+                    const stepNumber = index + 1;
+                    step.classList.remove('active', 'completed');
+                    if (stepNumber === currentStep) {
+                        step.classList.add('active');
+                    } else if (stepNumber < currentStep) {
+                        step.classList.add('completed');
+                    }
+                });
+                updateNavButtons();
+                if (currentStep === TOTAL_STEPS) {
+                    buildReviewContent();
+                }
+            };
+            
+            const updateNavButtons = () => {
+                backBtn.disabled = currentStep === 1;
+                nextBtn.textContent = currentStep === TOTAL_STEPS ? 'Submit for Approval' : 'Next';
+            };
+
+            const goToStep = (stepNumber) => {
+                currentStep = stepNumber;
+                updateUI();
+            };
+
+            const buildReviewContent = () => {
+                reviewContent.innerHTML = `
+                    <div class="review-section">
+                        <h4>Business Details</h4>
+                        <div class="review-item"><span class="label">Business Name:</span> <span>${onboardingData['business-name'] || ''}</span></div>
+                        <div class="review-item"><span class="label">TRN:</span> <span>${onboardingData.trn || ''}</span></div>
+                        <div class="review-item"><span class="label">Address:</span> <span>${onboardingData.address || ''}, ${onboardingData.city || ''}, ${onboardingData.parish || ''}</span></div>
+                    </div>
+                    <div class="review-section">
+                        <h4>Primary Contact</h4>
+                        <div class="review-item"><span class="label">Full Name:</span> <span>${onboardingData['contact-name'] || ''}</span></div>
+                        <div class="review-item"><span class="label">Email:</span> <span>${onboardingData['contact-email'] || ''}</span></div>
+                        <div class="review-item"><span class="label">Phone:</span> <span>${onboardingData['contact-phone'] || ''}</span></div>
+                        <div class="review-item"><span class="label">Job Title:</span> <span>${onboardingData['contact-title'] || ''}</span></div>
+                    </div>
+                    <div class="review-section">
+                        <h4>Banking Information</h4>
+                        <div class="review-item"><span class="label">Bank Name:</span> <span>${onboardingData['bank-name'] || ''}</span></div>
+                        <div class="review-item"><span class="label">Account Holder:</span> <span>${onboardingData['account-holder'] || ''}</span></div>
+                        <div class="review-item"><span class="label">Account Number:</span> <span>****${(onboardingData['account-number'] || '').slice(-4)}</span></div>
+                    </div>
+                    <div class="review-section">
+                        <h4>Documents</h4>
+                        <p>${onboardingData.files && onboardingData.files.length > 0 ? onboardingData.files.map(f => f.name).join(', ') : 'No documents uploaded.'}</p>
+                    </div>
+                `;
+            };
+
+            // --- FILE HANDLING ---
+            const renderFileList = () => {
+                fileList.innerHTML = '';
+                onboardingData.files.forEach((file, index) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span>${file.name}</span>
+                        <button class="file-delete-btn" data-index="${index}" title="Remove file">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                    `;
+                    fileList.appendChild(li);
+                });
+            };
+            
+            // --- EVENT LISTENERS ---
+            backBtn.addEventListener('click', () => {
+                if (currentStep > 1) {
+                    saveStepData(); // Save current step before going back
+                    goToStep(currentStep - 1);
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                const activeForm = document.querySelector(`#step-${currentStep} form`);
+                if (activeForm && !activeForm.checkValidity()) {
+                    activeForm.reportValidity();
+                    return;
+                }
+                
+                saveStepData();
+                if (currentStep < TOTAL_STEPS) {
+                    goToStep(currentStep + 1);
+                } else {
+                    submitFinalData();
+                }
+            });
+            
+            steps.forEach((step, index) => {
+                const header = step.querySelector('.step-header');
+                header.addEventListener('click', () => {
+                    if (step.classList.contains('completed')) {
+                        saveStepData();
+                        goToStep(index + 1);
+                    }
+                });
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                for (const file of e.target.files) {
+                    onboardingData.files.push({ name: file.name, size: file.size, type: file.type });
+                }
+                renderFileList();
+                saveStepData();
+            });
+
+            fileList.addEventListener('click', (e) => {
+                const deleteBtn = e.target.closest('.file-delete-btn');
+                if (deleteBtn) {
+                    const indexToRemove = parseInt(deleteBtn.dataset.index, 10);
+                    onboardingData.files.splice(indexToRemove, 1);
+                    renderFileList();
+                    saveStepData();
+                }
+            });
+
+            // --- INITIALIZATION ---
+            const initializeApp = () => {
+                loadDataFromStorage();
+                updateUI();
+            };
+
+            initializeApp();
+        });
+    </script>
+</body>
+</html>
