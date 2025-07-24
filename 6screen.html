@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biller Management Dashboard</title>
+    
+    <!-- Fonts and Icons from Google CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+    <style>
+        /* ------------------------- */
+        /* --- DESIGN SYSTEM & SETUP --- */
+        /* ------------------------- */
+        :root {
+            /* Branding Colors from Design.json */
+            --primary-color: #007a3d;
+            --secondary-color: #fdd835;
+            --accent-color: #92278f;
+            --text-primary-color: #212121;
+            --text-secondary-color: #6b6b6b;
+            --background-color: #ffffff;
+            --body-bg-color: #f7f7f7;
+            --border-color: #eeeeee;
+            
+            /* Status Chip Colors */
+            --status-pending-bg: #fff8e1;
+            --status-pending-text: #ff8f00;
+            --status-active-bg: #e8f5e9;
+            --status-active-text: #2e7d32;
+            --status-inactive-bg: #f5f5f5;
+            --status-inactive-text: #616161;
+            --status-rejected-bg: #ffebee;
+            --status-rejected-text: #c62828;
+
+            /* Typography */
+            --font-family-primary: 'Poppins', sans-serif;
+            --font-family-secondary: 'Open Sans', sans-serif;
+            --h3-font-size: 28px;
+            --body-font-size: 16px;
+
+            /* Layout & Components */
+            --max-width: 1200px;
+            --card-border-radius: 8px;
+            --card-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            --card-padding: 24px;
+            --button-border-radius: 6px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-family-secondary);
+            background-color: var(--body-bg-color);
+            color: var(--text-primary-color);
+            line-height: 1.6;
+            font-size: var(--body-font-size);
+            padding: 32px 16px;
+        }
+        
+        /* ------------------------- */
+        /* --- MATERIAL ICONS --- */
+        /* ------------------------- */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+            vertical-align: middle;
+            line-height: 1;
+        }
+        
+        /* ------------------------- */
+        /* --- MAIN LAYOUT & CARD --- */
+        /* ------------------------- */
+        .main-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            background: var(--background-color);
+            border-radius: var(--card-border-radius);
+            box-shadow: var(--card-box-shadow);
+            padding: var(--card-padding);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .card-header h3 {
+            font-family: var(--font-family-primary);
+            font-size: var(--h3-font-size);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header h3 .material-symbols-outlined {
+            color: var(--primary-color);
+            font-size: 32px;
+        }
+        
+        /* ------------------------- */
+        /* --- BUTTONS & CHIPS --- */
+        /* ------------------------- */
+        .btn {
+            border: none;
+            border-radius: var(--button-border-radius);
+            padding: 12px 24px;
+            font-family: var(--font-family-secondary);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.3s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn:hover { opacity: 0.9; }
+        .btn-primary { background-color: var(--primary-color); color: var(--background-color); }
+        .btn-icon { background: none; padding: 8px; border-radius: 50%; line-height: 1; }
+        .btn-icon:hover { background-color: rgba(0,0,0,0.05); }
+        .btn-icon .material-symbols-outlined { color: var(--text-secondary-color); }
+        .btn-icon.view .material-symbols-outlined { color: var(--primary-color); }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        .chip-pending { background-color: var(--status-pending-bg); color: var(--status-pending-text); }
+        .chip-active { background-color: var(--status-active-bg); color: var(--status-active-text); }
+        .chip-inactive { background-color: var(--status-inactive-bg); color: var(--status-inactive-text); }
+        .chip-rejected { background-color: var(--status-rejected-bg); color: var(--status-rejected-text); }
+        
+        /* ------------------------- */
+        /* --- FILTER BAR --- */
+        /* ------------------------- */
+        .filter-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .form-field {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            background-color: var(--body-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--button-border-radius);
+        }
+        .form-field .material-symbols-outlined {
+            padding-left: 12px;
+            color: var(--text-secondary-color);
+        }
+        .form-field input, .form-field select {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            font-size: var(--body-font-size);
+            font-family: var(--font-family-secondary);
+        }
+        .form-field input:focus, .form-field select:focus {
+            outline: none;
+        }
+        .form-field.status-filter {
+            min-width: 200px;
+            flex-grow: 0;
+        }
+
+        /* ------------------------- */
+        /* --- DATA TABLE --- */
+        /* ------------------------- */
+        .table-container { width: 100%; overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .data-table th { font-family: var(--font-family-primary); font-weight: 600; color: var(--text-secondary-color); font-size: 14px; text-transform: uppercase; }
+        .data-table td { color: var(--text-primary-color); vertical-align: middle; }
+        .data-table .actions-cell { text-align: right; white-space: nowrap; }
+        .empty-state { text-align: center; padding: 48px; color: var(--text-secondary-color); }
+
+        /* ------------------------- */
+        /* --- RESPONSIVENESS --- */
+        /* ------------------------- */
+        @media (max-width: 768px) {
+            .data-table thead { display: none; }
+            .data-table, .data-table tbody, .data-table tr, .data-table td { display: block; width: 100%; }
+            .data-table tr { margin-bottom: 16px; border: 1px solid var(--border-color); border-radius: var(--card-border-radius); padding: 16px; }
+            .data-table td { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border: none; text-align: right; }
+            .data-table td::before { content: attr(data-label); font-weight: 600; color: var(--text-secondary-color); text-align: left; padding-right: 16px; }
+            .data-table .actions-cell { justify-content: flex-end; }
+            .data-table .actions-cell::before { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="main-container">
+        <header class="card-header">
+            <h3>
+                <span class="material-symbols-outlined">business_center</span>
+                Biller Management
+            </h3>
+            <button id="onboard-biller-btn" class="btn btn-primary">
+                <span class="material-symbols-outlined">add_business</span>
+                Onboard New Biller
+            </button>
+        </header>
+
+        <section class="filter-bar">
+            <div class="form-field search-field">
+                <span class="material-symbols-outlined">search</span>
+                <input type="text" id="search-input" placeholder="Search by Name or TRN...">
+            </div>
+            <div class="form-field status-filter">
+                 <span class="material-symbols-outlined">filter_list</span>
+                <select id="status-filter">
+                    <option value="All">All Statuses</option>
+                    <option value="Pending Approval">Pending Approval</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Business Name</th>
+                        <th>TRN</th>
+                        <th>Onboarding Date</th>
+                        <th>Status</th>
+                        <th class="actions-cell">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="biller-table-body">
+                    <!-- JS will populate this -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const BILLER_DATA_KEY = 'billers';
+
+            // --- DOM REFERENCES ---
+            const onboardBillerBtn = document.getElementById('onboard-biller-btn');
+            const searchInput = document.getElementById('search-input');
+            const statusFilter = document.getElementById('status-filter');
+            const tableBody = document.getElementById('biller-table-body');
+            
+            let allBillers = []; // Master list of all billers from storage
+            
+            // --- DATA MANAGEMENT ---
+            const getBillers = () => {
+                const stored = localStorage.getItem(BILLER_DATA_KEY);
+                if (stored) return JSON.parse(stored);
+
+                // Pre-populate with diverse data if none exists
+                const defaults = [
+                    { id: 'b1', businessName: 'Jamaica Public Service', trn: '123456789', onboardingDate: '2023-01-15', status: 'Active' },
+                    { id: 'b2', name: 'Flow Jamaica', trn: '987654321', onboardingDate: '2023-02-20', status: 'Active' },
+                    { id: 'b3', name: 'National Water Company', trn: '112233445', onboardingDate: '2023-03-01', status: 'Active' },
+                    { id: 'b4', name: 'Kingston Mart', trn: '556677889', onboardingDate: '2024-05-10', status: 'Pending Approval' },
+                    { id: 'b5', name: 'Sunset Resorts', trn: '998877665', onboardingDate: '2024-04-22', status: 'Inactive' },
+                    { id: 'b6', name: 'Island Grill', trn: '223344556', onboardingDate: '2024-05-15', status: 'Rejected' },
+                ];
+                localStorage.setItem(BILLER_DATA_KEY, JSON.stringify(defaults));
+                return defaults;
+            };
+
+            // --- UI RENDERING & FILTERING ---
+            const renderTable = (billersToRender) => {
+                tableBody.innerHTML = '';
+                if (billersToRender.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="5" class="empty-state">No billers match the current filters.</td></tr>`;
+                    return;
+                }
+
+                billersToRender.forEach(biller => {
+                    const statusClass = biller.status.toLowerCase().replace(' ', '-');
+                    const statusChip = `<span class="chip chip-${statusClass}">${biller.status}</span>`;
+                    const formattedDate = new Date(biller.onboardingDate).toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'long', day: 'numeric'
+                    });
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td data-label="Business Name">${biller.businessName || biller.name}</td>
+                        <td data-label="TRN">${biller.trn}</td>
+                        <td data-label="Onboarding Date">${formattedDate}</td>
+                        <td data-label="Status">${statusChip}</td>
+                        <td class="actions-cell">
+                            <button class="btn btn-icon view" data-id="${biller.id}" title="View Details">
+                                <span class="material-symbols-outlined">visibility</span>
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            };
+
+            const applyFilters = () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedStatus = statusFilter.value;
+
+                let filteredBillers = allBillers.filter(biller => {
+                    const nameMatch = (biller.businessName || biller.name).toLowerCase().includes(searchTerm);
+                    const trnMatch = biller.trn.toLowerCase().includes(searchTerm);
+                    const statusMatch = selectedStatus === 'All' || biller.status === selectedStatus;
+
+                    return (nameMatch || trnMatch) && statusMatch;
+                });
+                
+                renderTable(filteredBillers);
+            };
+
+
+            // --- EVENT HANDLERS ---
+            searchInput.addEventListener('input', applyFilters);
+            statusFilter.addEventListener('change', applyFilters);
+            
+            onboardBillerBtn.addEventListener('click', () => {
+                // In a real app, this would navigate to Screen 2.2
+                alert("Navigating to Onboard New Biller screen... (Stub)");
+            });
+
+            tableBody.addEventListener('click', e => {
+                const viewBtn = e.target.closest('button.view');
+                if (viewBtn) {
+                    const billerId = viewBtn.dataset.id;
+                    // In a real app, this would navigate to Screen 2.3 with the billerId
+                    alert(`Viewing details for Biller ID: ${billerId} (Stub)`);
+                }
+            });
+
+            // --- INITIALIZATION ---
+            const initializeApp = () => {
+                allBillers = getBillers();
+                applyFilters(); // Initial render
+            };
+
+            initializeApp();
+        });
+    </script>
+</body>
+</html>
