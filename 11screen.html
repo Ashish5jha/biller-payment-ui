@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Customer Import</title>
+    
+    <!-- Fonts and Icons from Google CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+    <style>
+        /* ------------------------- */
+        /* --- DESIGN SYSTEM & SETUP --- */
+        /* ------------------------- */
+        :root {
+            /* Branding Colors */
+            --primary-color: #007a3d;
+            --text-primary-color: #212121;
+            --text-secondary-color: #6b6b6b;
+            --background-color: #ffffff;
+            --body-bg-color: #f7f7f7;
+            --border-color: #eeeeee;
+            --error-color: #d32f2f;
+            --success-color: #2e7d32;
+            --disabled-color: #bdbdbd;
+
+            /* Typography */
+            --font-family-primary: 'Poppins', sans-serif;
+            --font-family-secondary: 'Open Sans', sans-serif;
+            --h3-font-size: 28px;
+            --body-font-size: 16px;
+
+            /* Layout & Components */
+            --max-width: 900px;
+            --card-border-radius: 8px;
+            --card-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            --card-padding: 24px;
+            --button-border-radius: 6px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-family-secondary);
+            background-color: var(--body-bg-color);
+            color: var(--text-primary-color);
+            line-height: 1.6;
+            font-size: var(--body-font-size);
+            padding: 32px 16px;
+        }
+        
+        .hidden { display: none !important; }
+
+        /* ------------------------- */
+        /* --- MAIN LAYOUT & CARDS --- */
+        /* ------------------------- */
+        .main-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        .page-header {
+            font-family: var(--font-family-primary);
+            font-size: var(--h3-font-size);
+            font-weight: 700;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .page-header .material-symbols-outlined { font-size: 32px; color: var(--primary-color); }
+        .step-card {
+            background: var(--background-color);
+            border-radius: var(--card-border-radius);
+            box-shadow: var(--card-box-shadow);
+            padding: var(--card-padding);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        .step-card .icon {
+            color: var(--primary-color);
+            font-size: 36px;
+            margin-top: 4px;
+        }
+        .step-card .content h4 { font-family: var(--font-family-primary); font-weight: 600; font-size: 20px; }
+        .step-card .content p { color: var(--text-secondary-color); margin: 8px 0 16px; }
+        
+        /* ------------------------- */
+        /* --- BUTTONS --- */
+        /* ------------------------- */
+        .btn {
+            border: none; border-radius: var(--button-border-radius); padding: 12px 24px;
+            font-family: var(--font-family-secondary); font-weight: 600; font-size: 16px;
+            cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+            gap: 8px; transition: opacity 0.3s;
+        }
+        .btn:hover { opacity: 0.9; }
+        .btn:disabled { background-color: var(--disabled-color); cursor: not-allowed; }
+        .btn-primary { background-color: var(--primary-color); color: var(--background-color); }
+        .btn-stroked { background-color: transparent; color: var(--text-primary-color); border: 1px solid #ccc; }
+        
+        /* ------------------------- */
+        /* --- FILE INPUT & PREVIEW TABLE --- */
+        /* ------------------------- */
+        #upload-input { display: none; }
+        #results-summary { margin-bottom: 16px; padding: 12px; border-radius: 4px; }
+        #results-summary.success { background-color: #e8f5e9; color: var(--success-color); }
+        #results-summary.error { background-color: #ffebee; color: var(--error-color); }
+        .table-container { width: 100%; overflow-x: auto; max-height: 400px; }
+        .preview-table { width: 100%; border-collapse: collapse; }
+        .preview-table th, .preview-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .preview-table th { font-weight: 600; color: var(--text-secondary-color); font-size: 14px; }
+        .preview-table td .status-icon { font-size: 20px; }
+        .preview-table td .status-icon.valid { color: var(--success-color); }
+        .preview-table td .status-icon.invalid { color: var(--error-color); }
+        .error-message { font-size: 12px; color: var(--error-color); }
+        .action-bar { display: flex; justify-content: flex-end; gap: 16px; margin-top: 24px; }
+
+    </style>
+</head>
+<body>
+
+    <main class="main-container">
+        <h3 class="page-header">
+            <span class="material-symbols-outlined">upload_file</span>
+            Import Customers in Bulk
+        </h3>
+
+        <!-- Step 1: Download Template -->
+        <div class="step-card">
+            <span class="icon material-symbols-outlined">file_download</span>
+            <div class="content">
+                <h4>Step 1: Download Template</h4>
+                <p>Start by downloading our standardized CSV template. This ensures your data is in the correct format for a successful import.</p>
+                <button id="download-template-btn" class="btn btn-stroked">Download .CSV Template</button>
+            </div>
+        </div>
+
+        <!-- Step 2: Upload File -->
+        <div class="step-card">
+            <span class="icon material-symbols-outlined">upload</span>
+            <div class="content">
+                <h4>Step 2: Upload Your File</h4>
+                <p>Choose the .csv file you prepared. The required columns are: <strong>FullName, AccountID, Email, Phone</strong>.</p>
+                <label for="upload-input" class="btn btn-primary">Choose File</label>
+                <input type="file" id="upload-input" accept=".csv">
+                <p id="file-name-display" style="margin-top: 10px; font-weight: 600;"></p>
+            </div>
+        </div>
+
+        <!-- Step 3: Review & Results -->
+        <div id="results-card" class="step-card hidden">
+            <span class="icon material-symbols-outlined">fact_check</span>
+            <div class="content" style="width: 100%;">
+                <h4>Step 3: Review & Results</h4>
+                <div id="results-summary"></div>
+                <div class="table-container">
+                    <table class="preview-table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Full Name</th>
+                                <th>Account ID</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                            </tr>
+                        </thead>
+                        <tbody id="preview-table-body"></tbody>
+                    </table>
+                </div>
+                <div class="action-bar">
+                    <button id="cancel-btn" class="btn btn-stroked">Cancel</button>
+                    <button id="import-btn" class="btn btn-primary" disabled>Import Customers</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- LOCALSTORAGE KEYS ---
+            const CUSTOMER_KEY = 'biller_customers';
+            const ACTIVITY_KEY = 'biller_activity';
+
+            // --- DOM REFERENCES ---
+            const downloadBtn = document.getElementById('download-template-btn');
+            const uploadInput = document.getElementById('upload-input');
+            const fileNameDisplay = document.getElementById('file-name-display');
+            const resultsCard = document.getElementById('results-card');
+            const resultsSummary = document.getElementById('results-summary');
+            const previewTableBody = document.getElementById('preview-table-body');
+            const importBtn = document.getElementById('import-btn');
+            const cancelBtn = document.getElementById('cancel-btn');
+
+            let parsedData = [];
+
+            // --- DATA MANAGEMENT & SYNC ---
+            const getData = (key) => JSON.parse(localStorage.getItem(key) || '[]');
+            const saveData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+            
+            const logActivity = (message, icon = 'info') => {
+                const activityLog = getData(ACTIVITY_KEY);
+                activityLog.unshift({ icon, message, timestamp: new Date().toISOString() });
+                if (activityLog.length > 20) activityLog.pop(); 
+                saveData(ACTIVITY_KEY, activityLog);
+            };
+
+            // --- CORE FUNCTIONALITY ---
+            const downloadTemplate = () => {
+                const csvContent = "FullName,AccountID,Email,Phone\nJohn Doe,JD-001,john@example.com,876-555-0101\nJane Smith,JS-002,jane@example.com,876-555-0102";
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", "customer_template.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            const handleFileUpload = (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                fileNameDisplay.textContent = `Selected file: ${file.name}`;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const text = e.target.result;
+                    processCSV(text);
+                };
+                reader.readAsText(file);
+            };
+
+            const processCSV = (csvText) => {
+                const existingCustomers = getData(CUSTOMER_KEY);
+                const existingEmails = new Set(existingCustomers.map(c => c.email.toLowerCase()));
+                const existingAccountIds = new Set(existingCustomers.map(c => c.accountId).filter(Boolean));
+
+                const lines = csvText.split(/\r\n|\n/).slice(1); // Skip header
+                parsedData = lines.map(line => {
+                    const values = line.split(',');
+                    return {
+                        name: values[0]?.trim() || '',
+                        accountId: values[1]?.trim() || '',
+                        email: values[2]?.trim() || '',
+                        phone: values[3]?.trim() || '',
+                        _validation: { isValid: false, message: '' }
+                    };
+                }).filter(customer => customer.name); // Filter out empty lines
+
+                validateData(parsedData, existingEmails, existingAccountIds);
+                renderPreview();
+            };
+            
+            const validateData = (data, existingEmails, existingAccountIds) => {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                data.forEach(customer => {
+                    if (!customer.name || !customer.email) {
+                        customer._validation = { isValid: false, message: 'Missing required fields (Name, Email).' };
+                        return;
+                    }
+                    if (!emailRegex.test(customer.email)) {
+                        customer._validation = { isValid: false, message: 'Invalid email format.' };
+                        return;
+                    }
+                    if (existingEmails.has(customer.email.toLowerCase())) {
+                        customer._validation = { isValid: false, message: 'Email already exists.' };
+                        return;
+                    }
+                    if (customer.accountId && existingAccountIds.has(customer.accountId)) {
+                         customer._validation = { isValid: false, message: 'Account ID already exists.' };
+                         return;
+                    }
+                    
+                    customer._validation = { isValid: true, message: 'Ready to import' };
+                });
+            };
+
+            const renderPreview = () => {
+                previewTableBody.innerHTML = '';
+                let validCount = 0;
+                
+                parsedData.forEach(customer => {
+                    if (customer._validation.isValid) validCount++;
+                    
+                    const statusIcon = customer._validation.isValid
+                        ? `<span class="material-symbols-outlined status-icon valid" title="Valid">check_circle</span>`
+                        : `<span class="material-symbols-outlined status-icon invalid" title="${customer._validation.message}">error_outline</span>`;
+                        
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${statusIcon}</td>
+                        <td>${customer.name}</td>
+                        <td>${customer.accountId}</td>
+                        <td>${customer.email}</td>
+                        <td>${customer.phone}</td>
+                    `;
+                    if (!customer._validation.isValid) {
+                        const errorRow = document.createElement('tr');
+                        errorRow.innerHTML = `<td colspan="5"><div class="error-message">${customer._validation.message}</div></td>`;
+                        row.style.borderBottom = 'none';
+                        previewTableBody.appendChild(row);
+                        previewTableBody.appendChild(errorRow);
+                    } else {
+                         previewTableBody.appendChild(row);
+                    }
+                });
+
+                const errorCount = parsedData.length - validCount;
+                if (errorCount > 0) {
+                    resultsSummary.className = 'error';
+                    resultsSummary.textContent = `Validation failed. Found ${parsedData.length} customers with ${errorCount} error(s). Please fix the highlighted issues in your file and re-upload.`;
+                } else {
+                    resultsSummary.className = 'success';
+                    resultsSummary.textContent = `Validation successful! Found ${validCount} new customers ready to be imported.`;
+                }
+
+                importBtn.disabled = validCount === 0;
+                resultsCard.classList.remove('hidden');
+            };
+
+            const importCustomers = () => {
+                const validCustomers = parsedData.filter(c => c._validation.isValid);
+                if (validCustomers.length === 0) return;
+
+                const existingCustomers = getData(CUSTOMER_KEY);
+                
+                const newCustomers = validCustomers.map(c => ({
+                    id: 'c' + Date.now() + Math.random(), // more unique ID
+                    billerId: 'biller123', // Assume logged-in biller
+                    name: c.name,
+                    accountId: c.accountId,
+                    email: c.email,
+                    phone: c.phone
+                }));
+
+                const updatedCustomers = [...existingCustomers, ...newCustomers];
+                saveData(CUSTOMER_KEY, updatedCustomers);
+                logActivity(`${validCustomers.length} new customers were imported via bulk upload.`, 'upload_file');
+                
+                alert(`${validCustomers.length} customers imported successfully!`);
+                // Simulate navigation back to customer management
+                window.location.href = 'customer-management.html'; // In a real app, this would be the correct path
+            };
+
+            const resetView = () => {
+                parsedData = [];
+                uploadInput.value = '';
+                fileNameDisplay.textContent = '';
+                resultsCard.classList.add('hidden');
+                importBtn.disabled = true;
+            };
+
+            // --- EVENT LISTENERS ---
+            downloadBtn.addEventListener('click', downloadTemplate);
+            uploadInput.addEventListener('change', handleFileUpload);
+            cancelBtn.addEventListener('click', resetView);
+            importBtn.addEventListener('click', importCustomers);
+
+        });
+    </script>
+</body>
+</html>
