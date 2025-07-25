@@ -17,16 +17,15 @@
         /* ------------------------- */
         :root {
             --primary-color: #007a3d;
-            --secondary-color: #fdd835;
-            --accent-color: #92278f;
             --text-primary-color: #212121;
             --text-secondary-color: #6b6b6b;
             --background-color: #ffffff;
             --body-bg-color: #f7f7f7;
             --border-color: #eeeeee;
-            --status-active-bg: #e8f5e9; /* Light green */
+            --warning-color: #d32f2f;
+            --status-active-bg: #e8f5e9;
             --status-active-text: #2e7d32;
-            --status-inactive-bg: #f5f5f5; /* Light gray */
+            --status-inactive-bg: #f5f5f5;
             --status-inactive-text: #616161;
 
             /* Typography */
@@ -118,11 +117,13 @@
         }
         .btn:hover { opacity: 0.9; }
         .btn-primary { background-color: var(--primary-color); color: var(--background-color); }
+        .btn-danger { background-color: var(--warning-color); color: var(--background-color); }
         .btn-secondary { background-color: #e0e0e0; color: var(--text-primary-color); }
         .btn-icon { background: none; padding: 8px; border-radius: 50%; line-height: 1; }
         .btn-icon:hover { background-color: rgba(0,0,0,0.05); }
         .btn-icon .material-symbols-outlined { color: var(--text-secondary-color); }
         .btn-icon.edit .material-symbols-outlined { color: var(--primary-color); }
+        .btn-icon.delete .material-symbols-outlined { color: var(--warning-color); }
 
         .chip {
             display: inline-flex;
@@ -158,7 +159,8 @@
         .dialog-backdrop.visible { opacity: 1; visibility: visible; }
         .dialog-content { background: var(--background-color); border-radius: var(--card-border-radius); padding: var(--card-padding); width: 90%; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transform: scale(0.9); transition: transform 0.3s; }
         .dialog-backdrop.visible .dialog-content { transform: scale(1); }
-        .dialog-header { font-family: var(--font-family-primary); font-size: 22px; margin-bottom: 24px; }
+        .dialog-header { font-family: var(--font-family-primary); font-size: 22px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+        .dialog-header .material-symbols-outlined { color: var(--warning-color); }
         .dialog-body { margin-bottom: 24px; color: var(--text-secondary-color); }
         .dialog-actions { display: flex; justify-content: flex-end; gap: 12px; }
 
@@ -188,7 +190,7 @@
     </style>
 </head>
 <body>
-<div id="header-placeholder"></div>
+    <div id="header-placeholder"></div>
     <main class="main-container">
         <header class="card-header">
             <h3>
@@ -249,6 +251,23 @@
         </div>
     </div>
     
+    <!-- Delete Confirmation Dialog -->
+    <div id="delete-dialog" class="dialog-backdrop">
+        <div class="dialog-content">
+            <h4 class="dialog-header">
+                <span class="material-symbols-outlined">warning</span>
+                Delete User
+            </h4>
+            <div class="dialog-body">
+                <p>Are you sure you want to permanently delete this user? This action cannot be undone.</p>
+            </div>
+            <div class="dialog-actions">
+                <button id="cancel-delete-btn" class="btn btn-secondary">Cancel</button>
+                <button id="confirm-delete-btn" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -260,7 +279,7 @@
             const addUserBtn = document.getElementById('add-user-btn');
             const tableBody = document.getElementById('user-table-body');
             
-            // Dialog
+            // Add/Edit Dialog
             const userDialog = document.getElementById('user-dialog');
             const dialogTitle = document.getElementById('dialog-title');
             const userForm = document.getElementById('user-form');
@@ -271,8 +290,14 @@
             const cancelBtn = document.getElementById('cancel-btn');
             const saveBtn = document.getElementById('save-btn');
             
+            // Delete Dialog
+            const deleteDialog = document.getElementById('delete-dialog');
+            const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+            const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+            
             let users = [];
             let roles = [];
+            let userToDeleteId = null;
 
             // --- DATA MANAGEMENT ---
             const getRoles = () => JSON.parse(localStorage.getItem(ROLE_DATA_KEY) || '[]');
@@ -280,7 +305,6 @@
             const getUsers = () => {
                 const stored = localStorage.getItem(USER_DATA_KEY);
                 if (stored) return JSON.parse(stored);
-                // Default data demonstrates links to default roles
                 const defaults = [
                     { id: 'u1', name: 'Admin User', email: 'admin@svl.com', roleIds: ['r1'], isActive: true },
                     { id: 'u2', name: 'Support User', email: 'support@svl.com', roleIds: ['r2'], isActive: true },
@@ -300,13 +324,11 @@
                 }
 
                 users.forEach(user => {
-                    // Create Role Chips HTML
                     const userRoles = user.roleIds.map(roleId => {
                         const role = roles.find(r => r.id === roleId);
                         return role ? `<span class="chip role-chip">${role.name}</span>` : '';
                     }).join('');
 
-                    // Create Status Chip and Toggle Icon HTML
                     const statusChip = user.isActive
                         ? `<span class="chip status-active"><span class="material-symbols-outlined">check_circle</span> Active</span>`
                         : `<span class="chip status-inactive"><span class="material-symbols-outlined">do_not_disturb_on</span> Inactive</span>`;
@@ -314,16 +336,16 @@
                     const toggleIcon = user.isActive ? 'toggle_on' : 'toggle_off';
                     const toggleTitle = user.isActive ? 'Disable User' : 'Enable User';
                     
-                    // Create table row
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td data-label="Name">${user.name}</td>
                         <td data-label="Email">${user.email}</td>
-                        <td data-label="Roles"><div class="chip-list">${userRoles || 'No Roles'}</div></td>
+                        <td data-label="Roles"><div class="chip-list">${userRoles || 'No Roles Assigned'}</div></td>
                         <td data-label="Status">${statusChip}</td>
                         <td class="actions-cell">
                             <button class="btn btn-icon edit" data-id="${user.id}" title="Edit User"><span class="material-symbols-outlined">edit</span></button>
                             <button class="btn btn-icon toggle-status" data-id="${user.id}" title="${toggleTitle}"><span class="material-symbols-outlined">${toggleIcon}</span></button>
+                            <button class="btn btn-icon delete" data-id="${user.id}" title="Delete User"><span class="material-symbols-outlined">delete_outline</span></button>
                         </td>
                     `;
                     tableBody.appendChild(row);
@@ -424,6 +446,24 @@
                         }
                     }
                 }
+
+                const deleteBtn = e.target.closest('button.delete');
+                if (deleteBtn) {
+                    userToDeleteId = deleteBtn.dataset.id;
+                    openDialog(deleteDialog);
+                }
+            });
+
+            // Delete Dialog Logic
+            cancelDeleteBtn.addEventListener('click', () => closeDialog(deleteDialog));
+            confirmDeleteBtn.addEventListener('click', () => {
+                if (userToDeleteId) {
+                    users = users.filter(u => u.id !== userToDeleteId);
+                    saveUsers(users);
+                    renderUserTable();
+                    closeDialog(deleteDialog);
+                    userToDeleteId = null;
+                }
             });
 
             // --- INITIALIZATION ---
@@ -436,6 +476,7 @@
             initializeApp();
         });
     </script>
+
         <script>
         fetch("header.html")
             .then(res => res.text())

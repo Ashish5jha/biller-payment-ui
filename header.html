@@ -23,16 +23,134 @@
     z-index: 999;
   }
 
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+  }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #007a3d, #00a651, #00c853);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0, 122, 61, 0.3);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  /* Animated shimmer effect for logo */
+  .logo-icon::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    transform: rotate(45deg);
+    animation: shimmer 3s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    50% {
+      transform: translateX(0%) translateY(0%) rotate(45deg);
+    }
+    100% {
+      transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
+  }
+
+  /* Logo hover effects */
+  .logo-container:hover .logo-icon {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 4px 16px rgba(0, 122, 61, 0.4);
+    background: linear-gradient(135deg, #00a651, #00c853, #4caf50);
+  }
+
+  .logo-container:hover .logo-icon .material-icons {
+    animation: bounce 0.6s ease;
+  }
+
+  @keyframes bounce {
+    0%, 20%, 60%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-8px);
+    }
+    80% {
+      transform: translateY(-4px);
+    }
+  }
+
+  /* Gradient text for brand name */
   .navbar h2 {
     font-family: 'Poppins', sans-serif;
     margin: 0;
     font-size: 1.2rem;
-    color: #007a3d;
+    background: linear-gradient(135deg, #007a3d, #00a651, #4caf50);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 600;
+    animation: gradientShift 4s ease-in-out infinite;
+    transition: all 0.3s ease;
+  }
+
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Text hover effect */
+  .logo-container:hover h2 {
+    transform: translateX(5px);
+    animation-duration: 2s;
+  }
+
+  /* Floating animation for the entire logo container */
+  .logo-container {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
   }
 
   .nav-links {
     display: flex;
     gap: 16px;
+    margin-right: 7rem;
   }
 
   .dropdown {
@@ -50,10 +168,23 @@
     display: flex;
     align-items: center;
     gap: 4px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+  }
+
+  .dropdown-button:hover {
+    background: linear-gradient(135deg, rgba(0, 122, 61, 0.1), rgba(0, 166, 81, 0.1));
+    transform: translateY(-2px);
+  }
+
+  .dropdown-button:hover .material-icons {
+    transform: rotate(180deg);
   }
 
   .material-icons {
     font-size: 18px;
+    transition: transform 0.3s ease;
   }
 
   .dropdown-content {
@@ -68,6 +199,9 @@
     min-width: 240px;
     padding: 8px 0;
     z-index: 1000;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
   }
 
   .dropdown-content a {
@@ -76,19 +210,53 @@
     color: #007a3d;
     font-weight: 500;
     font-size: 0.9rem;
-    transition: background 0.2s ease;
+    transition: all 0.2s ease;
     white-space: nowrap;
+    transform: translateX(-10px);
+    opacity: 0;
+    animation: slideInLeft 0.3s ease forwards;
+  }
+
+  @keyframes slideInLeft {
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
   }
 
   .dropdown-content a:hover {
-    background-color: #f0f0f0;
+    background: linear-gradient(90deg, rgba(0, 122, 61, 0.1), rgba(0, 166, 81, 0.1));
+    padding-left: 20px;
+    color: #005a2d;
   }
 
   .dropdown.open .dropdown-content {
     display: flex;
+    opacity: 1;
+    transform: translateY(0);
   }
 
+  /* Staggered animation for dropdown items */
+  .dropdown.open .dropdown-content a:nth-child(1) { animation-delay: 0.1s; }
+  .dropdown.open .dropdown-content a:nth-child(2) { animation-delay: 0.2s; }
+  .dropdown.open .dropdown-content a:nth-child(3) { animation-delay: 0.3s; }
+  .dropdown.open .dropdown-content a:nth-child(4) { animation-delay: 0.4s; }
+
   @media (max-width: 600px) {
+    .logo-container {
+      gap: 8px;
+    }
+    
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      font-size: 16px;
+    }
+    
+    .navbar h2 {
+      font-size: 1rem;
+    }
+    
     .nav-links {
       flex-direction: column;
       align-items: flex-start;
@@ -97,12 +265,30 @@
     .dropdown-content {
       min-width: 200px;
     }
+
+    /* Reduce animations on mobile for performance */
+    .logo-container {
+      animation: none;
+    }
+    
+    .navbar h2 {
+      animation: none;
+      background: linear-gradient(135deg, #007a3d, #00a651);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
   }
 </style>
 
 <!-- Header HTML -->
 <nav class="navbar">
-  <h2>Biller UI</h2>
+  <div class="logo-container">
+    <div class="logo-icon">
+      <span class="material-icons">account_balance</span>
+    </div>
+    <h2>Bill Payment Platform</h2>
+  </div>
   <div class="nav-links">
     <div class="dropdown">
       <button class="dropdown-button">Section 1: Admin <span class="material-icons">expand_more</span></button>
@@ -133,5 +319,34 @@
   </div>
 </nav>
 
-
-
+<script>
+// Add dropdown functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const dropdowns = document.querySelectorAll('.dropdown');
+  
+  dropdowns.forEach(dropdown => {
+    const button = dropdown.querySelector('.dropdown-button');
+    
+    button.addEventListener('click', function(e) {
+      e.stopPropagation();
+      
+      // Close other dropdowns
+      dropdowns.forEach(other => {
+        if (other !== dropdown) {
+          other.classList.remove('open');
+        }
+      });
+      
+      // Toggle current dropdown
+      dropdown.classList.toggle('open');
+    });
+  });
+  
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', function() {
+    dropdowns.forEach(dropdown => {
+      dropdown.classList.remove('open');
+    });
+  });
+});
+</script>
