@@ -412,7 +412,10 @@
             };
             
             // --- EVENT LISTENERS ---
-            addCustomerBtn.addEventListener('click', () => alert('Navigating to Add Customer screen (Screen 3.3)...'));
+            addCustomerBtn.addEventListener('click', () => {alert('Navigating to Add Customer screen (Screen 3.3)...')
+                // In a real app, this would navigate to the Add Customer screen
+                window.location.href = '9screen.html'; // Assuming 10screen.html is the Add Customer screen
+            });
             createBillBtn.addEventListener('click', () => alert('Navigating to Create Bill screen (Screen 4.2)...'));
             importBillsBtn.addEventListener('click', () => alert('Navigating to Import Bills screen (Screen 4.3)...'));
             
