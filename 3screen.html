@@ -299,7 +299,7 @@
     </style>
 </head>
 <body>
-
+<div id="header-placeholder"></div>
     <!-- LIST VIEW -->
     <div id="role-list-view">
         <div class="main-container">
@@ -599,6 +599,28 @@
             initializeApp();
         });
     </script>
+    <script>
+        fetch("header.html")
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById("header-placeholder").innerHTML = html;
 
+                // 🟢 NOW that header is injected, attach dropdown toggle
+                document.addEventListener('click', function (e) {
+                    const isDropdownBtn = e.target.closest('.dropdown-button');
+                    const dropdowns = document.querySelectorAll('.dropdown');
+
+                    dropdowns.forEach(drop => {
+                        if (drop.contains(e.target)) {
+                            if (isDropdownBtn) {
+                                drop.classList.toggle('open');
+                            }
+                        } else {
+                            drop.classList.remove('open');
+                        }
+                    });
+                });
+            });
+    </script>
 </body>
 </html>

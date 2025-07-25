@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Management</title>
-    
+
     <!-- Fonts and Icons from Google CDN -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        rel="stylesheet" />
 
     <style>
         /* ------------------------- */
@@ -39,7 +44,11 @@
             --button-border-radius: 6px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: var(--font-family-secondary);
@@ -49,7 +58,7 @@
             font-size: var(--body-font-size);
             padding: 32px 16px;
         }
-        
+
         /* ------------------------- */
         /* --- MATERIAL ICONS --- */
         /* ------------------------- */
@@ -58,7 +67,7 @@
             vertical-align: middle;
             line-height: 1;
         }
-        
+
         /* ------------------------- */
         /* --- MAIN LAYOUT & CARD --- */
         /* ------------------------- */
@@ -93,7 +102,7 @@
             color: var(--primary-color);
             font-size: 32px;
         }
-        
+
         .header-actions {
             display: flex;
             gap: 16px;
@@ -118,13 +127,40 @@
             transition: opacity 0.3s;
             -webkit-tap-highlight-color: transparent;
         }
-        .btn:hover { opacity: 0.9; }
-        .btn-primary { background-color: var(--primary-color); color: var(--background-color); }
-        .btn-stroked { background-color: transparent; color: var(--text-primary-color); border: 1px solid #ccc; }
-        .btn-icon { background: none; padding: 8px; border-radius: 50%; line-height: 1; }
-        .btn-icon:hover { background-color: rgba(0,0,0,0.05); }
-        .btn-icon .material-symbols-outlined { color: var(--text-secondary-color); }
-        .btn-icon.edit .material-symbols-outlined { color: var(--primary-color); }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+        }
+
+        .btn-stroked {
+            background-color: transparent;
+            color: var(--text-primary-color);
+            border: 1px solid #ccc;
+        }
+
+        .btn-icon {
+            background: none;
+            padding: 8px;
+            border-radius: 50%;
+            line-height: 1;
+        }
+
+        .btn-icon:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-icon .material-symbols-outlined {
+            color: var(--text-secondary-color);
+        }
+
+        .btn-icon.edit .material-symbols-outlined {
+            color: var(--primary-color);
+        }
 
         /* ------------------------- */
         /* --- SEARCH & DATA TABLE --- */
@@ -137,57 +173,223 @@
             border: 1px solid var(--border-color);
             border-radius: var(--button-border-radius);
         }
-        .search-bar .material-symbols-outlined { padding: 0 12px; color: var(--text-secondary-color); }
-        .search-bar input { flex-grow: 1; padding: 12px 0; border: none; background: transparent; font-size: var(--body-font-size); font-family: var(--font-family-secondary); }
-        .search-bar input:focus { outline: none; }
-        
-        .table-container { width: 100%; overflow-x: auto; }
-        .data-table { width: 100%; border-collapse: collapse; }
-        .data-table th, .data-table td { padding: 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
-        .data-table th { font-family: var(--font-family-primary); font-weight: 600; color: var(--text-secondary-color); font-size: 14px; text-transform: uppercase; }
-        .data-table td { color: var(--text-primary-color); vertical-align: middle; }
-        .data-table .actions-cell { text-align: right; white-space: nowrap; }
-        .empty-state { text-align: center; padding: 48px; color: var(--text-secondary-color); }
+
+        .search-bar .material-symbols-outlined {
+            padding: 0 12px;
+            color: var(--text-secondary-color);
+        }
+
+        .search-bar input {
+            flex-grow: 1;
+            padding: 12px 0;
+            border: none;
+            background: transparent;
+            font-size: var(--body-font-size);
+            font-family: var(--font-family-secondary);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table th {
+            font-family: var(--font-family-primary);
+            font-weight: 600;
+            color: var(--text-secondary-color);
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .data-table td {
+            color: var(--text-primary-color);
+            vertical-align: middle;
+        }
+
+        .data-table .actions-cell {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-secondary-color);
+        }
 
         /* ------------------------- */
         /* --- DIALOG / MODAL --- */
         /* ------------------------- */
-        .dialog-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s; }
-        .dialog-backdrop.visible { opacity: 1; visibility: visible; }
-        .dialog-content { background: var(--background-color); border-radius: var(--card-border-radius); padding: var(--card-padding); width: 90%; max-width: 600px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transform: scale(0.9); transition: transform 0.3s; }
-        .dialog-backdrop.visible .dialog-content { transform: scale(1); }
-        .dialog-header { font-family: var(--font-family-primary); font-size: 22px; margin-bottom: 24px; }
-        .dialog-body { margin-bottom: 24px; color: var(--text-secondary-color); }
-        .dialog-actions { display: flex; justify-content: flex-end; gap: 12px; }
-        .dialog-content.delete-confirm .dialog-header { display: flex; align-items: center; gap: 16px; }
-        .dialog-content.delete-confirm .material-symbols-outlined { color: var(--warning-color); }
+        .dialog-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s;
+        }
+
+        .dialog-backdrop.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .dialog-content {
+            background: var(--background-color);
+            border-radius: var(--card-border-radius);
+            padding: var(--card-padding);
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+
+        .dialog-backdrop.visible .dialog-content {
+            transform: scale(1);
+        }
+
+        .dialog-header {
+            font-family: var(--font-family-primary);
+            font-size: 22px;
+            margin-bottom: 24px;
+        }
+
+        .dialog-body {
+            margin-bottom: 24px;
+            color: var(--text-secondary-color);
+        }
+
+        .dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .dialog-content.delete-confirm .dialog-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .dialog-content.delete-confirm .material-symbols-outlined {
+            color: var(--warning-color);
+        }
 
         /* ------------------------- */
         /* --- FORM FIELDS --- */
         /* ------------------------- */
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .form-field { margin-bottom: 20px; }
-        .form-field label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary-color); font-size: 14px; }
-        .form-field input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: var(--button-border-radius); font-size: var(--body-font-size); }
-        .form-field input:focus { outline: none; border-color: var(--primary-color); }
-        .form-field.full-width { grid-column: 1 / -1; }
-        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-field {
+            margin-bottom: 20px;
+        }
+
+        .form-field label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-secondary-color);
+            font-size: 14px;
+        }
+
+        .form-field input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: var(--button-border-radius);
+            font-size: var(--body-font-size);
+        }
+
+        .form-field input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-field.full-width {
+            grid-column: 1 / -1;
+        }
+
         /* ------------------------- */
         /* --- RESPONSIVENESS --- */
         /* ------------------------- */
         @media (max-width: 768px) {
-            .data-table thead { display: none; }
-            .data-table, .data-table tbody, .data-table tr, .data-table td { display: block; width: 100%; }
-            .data-table tr { margin-bottom: 16px; border: 1px solid var(--border-color); border-radius: var(--card-border-radius); padding: 16px; }
-            .data-table td { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border: none; text-align: right; }
-            .data-table td::before { content: attr(data-label); font-weight: 600; color: var(--text-secondary-color); text-align: left; padding-right: 16px; }
-            .data-table .actions-cell { justify-content: flex-end; }
-            .data-table .actions-cell::before { display: none; }
+            .data-table thead {
+                display: none;
+            }
+
+            .data-table,
+            .data-table tbody,
+            .data-table tr,
+            .data-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .data-table tr {
+                margin-bottom: 16px;
+                border: 1px solid var(--border-color);
+                border-radius: var(--card-border-radius);
+                padding: 16px;
+            }
+
+            .data-table td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 0;
+                border: none;
+                text-align: right;
+            }
+
+            .data-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: var(--text-secondary-color);
+                text-align: left;
+                padding-right: 16px;
+            }
+
+            .data-table .actions-cell {
+                justify-content: flex-end;
+            }
+
+            .data-table .actions-cell::before {
+                display: none;
+            }
         }
     </style>
 </head>
-<body>
 
+<body>
+    <div id="header-placeholder"></div>
     <main class="main-container">
         <header class="card-header">
             <h3>
@@ -237,14 +439,22 @@
                 <form id="customer-form">
                     <input type="hidden" id="customer-id">
                     <div class="form-grid">
-                        <div class="form-field"><label for="customer-name">Full Name (Required)</label><input type="text" id="customer-name" required></div>
-                        <div class="form-field"><label for="customer-account-id">Account ID (Optional)</label><input type="text" id="customer-account-id"></div>
-                        <div class="form-field"><label for="customer-email">Email Address (Required)</label><input type="email" id="customer-email" required></div>
-                        <div class="form-field"><label for="customer-phone">Phone Number</label><input type="tel" id="customer-phone"></div>
-                        <div class="form-field"><label for="customer-address1">Address Line 1</label><input type="text" id="customer-address1"></div>
-                        <div class="form-field"><label for="customer-address2">Address Line 2</label><input type="text" id="customer-address2"></div>
-                        <div class="form-field"><label for="customer-city">City / Town</label><input type="text" id="customer-city"></div>
-                        <div class="form-field"><label for="customer-parish">Parish</label><input type="text" id="customer-parish"></div>
+                        <div class="form-field"><label for="customer-name">Full Name (Required)</label><input
+                                type="text" id="customer-name" required></div>
+                        <div class="form-field"><label for="customer-account-id">Account ID (Optional)</label><input
+                                type="text" id="customer-account-id"></div>
+                        <div class="form-field"><label for="customer-email">Email Address (Required)</label><input
+                                type="email" id="customer-email" required></div>
+                        <div class="form-field"><label for="customer-phone">Phone Number</label><input type="tel"
+                                id="customer-phone"></div>
+                        <div class="form-field"><label for="customer-address1">Address Line 1</label><input type="text"
+                                id="customer-address1"></div>
+                        <div class="form-field"><label for="customer-address2">Address Line 2</label><input type="text"
+                                id="customer-address2"></div>
+                        <div class="form-field"><label for="customer-city">City / Town</label><input type="text"
+                                id="customer-city"></div>
+                        <div class="form-field"><label for="customer-parish">Parish</label><input type="text"
+                                id="customer-parish"></div>
                     </div>
                 </form>
             </div>
@@ -254,7 +464,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Delete Confirmation Dialog -->
     <div id="delete-dialog" class="dialog-backdrop">
         <div class="dialog-content delete-confirm">
@@ -290,26 +500,26 @@
             const importCustomersBtn = document.getElementById('import-customers-btn');
             const searchInput = document.getElementById('search-input');
             const tableBody = document.getElementById('customer-table-body');
-            
+
             // Add/Edit Dialog (Screen 3.3)
             const customerDialog = document.getElementById('customer-dialog');
             const dialogTitle = document.getElementById('dialog-title');
             const customerForm = document.getElementById('customer-form');
             const customerIdInput = document.getElementById('customer-id');
             const cancelBtn = document.getElementById('cancel-btn');
-            
+
             // Delete Dialog
             const deleteDialog = document.getElementById('delete-dialog');
             const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
             const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
-            
+
             let allCustomers = [];
             let customerToDeleteId = null;
 
             // --- DATA MANAGEMENT & SYNC ---
             const getData = (key) => JSON.parse(localStorage.getItem(key) || '[]');
             const saveData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
-            
+
             const logActivity = (message, icon = 'info') => {
                 const activityLog = getData(ACTIVITY_KEY);
                 activityLog.unshift({
@@ -318,7 +528,7 @@
                     timestamp: new Date().toISOString()
                 });
                 // Keep the log to a reasonable size, e.g., 20 items
-                if (activityLog.length > 20) activityLog.pop(); 
+                if (activityLog.length > 20) activityLog.pop();
                 saveData(ACTIVITY_KEY, activityLog);
             };
 
@@ -351,7 +561,7 @@
                     renderTable(allCustomers);
                     return;
                 }
-                const filtered = allCustomers.filter(c => 
+                const filtered = allCustomers.filter(c =>
                     c.name.toLowerCase().includes(searchTerm) ||
                     c.email.toLowerCase().includes(searchTerm) ||
                     (c.accountId && c.accountId.toLowerCase().includes(searchTerm))
@@ -383,7 +593,7 @@
                     openDialog(customerDialog);
                 }
             };
-            
+
             // --- EVENT LISTENERS ---
             addCustomerBtn.addEventListener('click', openAddDialog);
             importCustomersBtn.addEventListener('click', () => alert('Navigating to Bulk Import screen (Screen 3.4)...'));
@@ -419,7 +629,7 @@
                 applySearchFilter();
                 closeDialog(customerDialog);
             });
-            
+
             tableBody.addEventListener('click', e => {
                 const editBtn = e.target.closest('button.edit');
                 if (editBtn) openEditDialog(editBtn.dataset.id);
@@ -430,7 +640,7 @@
                     openDialog(deleteDialog);
                 }
             });
-            
+
             // Delete Dialog Logic
             cancelDeleteBtn.addEventListener('click', () => closeDialog(deleteDialog));
             confirmDeleteBtn.addEventListener('click', () => {
@@ -454,5 +664,29 @@
             initializeApp();
         });
     </script>
+    <script>
+        fetch("header.html")
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById("header-placeholder").innerHTML = html;
+
+                // 🟢 NOW that header is injected, attach dropdown toggle
+                document.addEventListener('click', function (e) {
+                    const isDropdownBtn = e.target.closest('.dropdown-button');
+                    const dropdowns = document.querySelectorAll('.dropdown');
+
+                    dropdowns.forEach(drop => {
+                        if (drop.contains(e.target)) {
+                            if (isDropdownBtn) {
+                                drop.classList.toggle('open');
+                            }
+                        } else {
+                            drop.classList.remove('open');
+                        }
+                    });
+                });
+            });
+    </script>
 </body>
+
 </html>

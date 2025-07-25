@@ -1,0 +1,137 @@
+<!-- Fonts and Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<!-- Styles -->
+<style>
+  body {
+    margin-top: 80px; /* space for fixed header */
+  }
+
+  .navbar {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+  }
+
+  .navbar h2 {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    font-size: 1.2rem;
+    color: #007a3d;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 16px;
+  }
+
+  .dropdown {
+    position: relative;
+  }
+
+  .dropdown-button {
+    background: none;
+    border: none;
+    color: #007a3d;
+    font-weight: 600;
+    font-family: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .material-icons {
+    font-size: 18px;
+  }
+
+  .dropdown-content {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 38px;
+    left: 0;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    min-width: 240px;
+    padding: 8px 0;
+    z-index: 1000;
+  }
+
+  .dropdown-content a {
+    padding: 10px 16px;
+    text-decoration: none;
+    color: #007a3d;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .dropdown-content a:hover {
+    background-color: #f0f0f0;
+  }
+
+  .dropdown.open .dropdown-content {
+    display: flex;
+  }
+
+  @media (max-width: 600px) {
+    .nav-links {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .dropdown-content {
+      min-width: 200px;
+    }
+  }
+</style>
+
+<!-- Header HTML -->
+<nav class="navbar">
+  <h2>Biller UI</h2>
+  <div class="nav-links">
+    <div class="dropdown">
+      <button class="dropdown-button">Section 1: Admin <span class="material-icons">expand_more</span></button>
+      <div class="dropdown-content">
+        <a href="1screen.html">Screen 1.1 – Module Management</a>
+        <a href="2screen.html">Screen 1.2 – Permission Management</a>
+        <a href="3screen.html">Screen 1.3 – Role Management</a>
+        <a href="4screen.html">Screen 1.4 – User Management</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <button class="dropdown-button">Section 2: Biller Admin <span class="material-icons">expand_more</span></button>
+      <div class="dropdown-content">
+        <a href="5screen.html">Screen 2.1 – Biller Management Dashboard</a>
+        <a href="6screen.html">Screen 2.2 – Biller Onboarding Wizard</a>
+        <a href="7screen.html">Screen 2.3 – Detailed Biller Profile</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <button class="dropdown-button">Section 3: Customer <span class="material-icons">expand_more</span></button>
+      <div class="dropdown-content">
+        <a href="8screen.html">Screen 3.1 – Biller Dashboard</a>
+        <a href="9screen.html">Screen 3.2 – Customer Management</a>
+        <a href="10screen.html">Screen 3.3 – Add/Edit Customer</a>
+        <a href="11screen.html">Screen 3.4 – Bulk Customer Import</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+

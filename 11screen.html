@@ -123,7 +123,7 @@
     </style>
 </head>
 <body>
-
+<div id="header-placeholder"></div>
     <main class="main-container">
         <h3 class="page-header">
             <span class="material-symbols-outlined">upload_file</span>
@@ -364,6 +364,29 @@
             importBtn.addEventListener('click', importCustomers);
 
         });
+    </script>
+        <script>
+        fetch("header.html")
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById("header-placeholder").innerHTML = html;
+
+                // 🟢 NOW that header is injected, attach dropdown toggle
+                document.addEventListener('click', function (e) {
+                    const isDropdownBtn = e.target.closest('.dropdown-button');
+                    const dropdowns = document.querySelectorAll('.dropdown');
+
+                    dropdowns.forEach(drop => {
+                        if (drop.contains(e.target)) {
+                            if (isDropdownBtn) {
+                                drop.classList.toggle('open');
+                            }
+                        } else {
+                            drop.classList.remove('open');
+                        }
+                    });
+                });
+            });
     </script>
 </body>
 </html>
