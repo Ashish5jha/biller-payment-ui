@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification & Reminder Settings</title>
+    
+    <!-- Fonts and Icons from Google CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+    <style>
+        /* ------------------------- */
+        /* --- DESIGN SYSTEM & SETUP --- */
+        /* ------------------------- */
+        :root {
+            /* Branding Colors */
+            --primary-color: #007a3d;
+            --text-primary-color: #212121;
+            --text-secondary-color: #6b6b6b;
+            --background-color: #ffffff;
+            --body-bg-color: #f7f7f7;
+            --border-color: #eeeeee;
+            --disabled-color: #bdbdbd;
+
+            /* Typography */
+            --font-family-primary: 'Poppins', sans-serif;
+            --font-family-secondary: 'Open Sans', sans-serif;
+            --h3-font-size: 28px;
+            --h4-font-size: 22px;
+            --body-font-size: 16px;
+
+            /* Layout & Components */
+            --max-width: 900px;
+            --card-border-radius: 8px;
+            --card-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            --card-padding: 24px;
+            --button-border-radius: 6px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-family-secondary);
+            background-color: var(--body-bg-color);
+            color: var(--text-primary-color);
+            line-height: 1.6;
+            font-size: var(--body-font-size);
+            padding: 32px 16px;
+        }
+        
+        /* ------------------------- */
+        /* --- MAIN LAYOUT & CARDS --- */
+        /* ------------------------- */
+        .main-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        .page-header {
+            font-family: var(--font-family-primary);
+            font-size: var(--h3-font-size);
+            font-weight: 700;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .page-header .material-symbols-outlined { font-size: 32px; color: var(--primary-color); }
+        .settings-card {
+            background: var(--background-color);
+            border-radius: var(--card-border-radius);
+            box-shadow: var(--card-box-shadow);
+            padding: var(--card-padding);
+            margin-bottom: 24px;
+        }
+        .settings-card h4 {
+            font-family: var(--font-family-primary);
+            font-size: var(--h4-font-size);
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        /* ------------------------- */
+        /* --- CUSTOM TOGGLE SWITCH --- */
+        /* ------------------------- */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 28px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* ------------------------- */
+        /* --- FORM FIELDS --- */
+        /* ------------------------- */
+        .config-fields {
+            margin-top: 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, margin-top 0.5s ease-out;
+        }
+        .config-fields.visible {
+             max-height: 300px; /* Adjust as needed */
+        }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .form-field label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary-color); font-size: 14px; }
+        .form-field input, .form-field textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: var(--button-border-radius); font-size: var(--body-font-size); font-family: var(--font-family-secondary); }
+        .form-field input:focus, .form-field textarea:focus { outline: none; border-color: var(--primary-color); }
+        .form-field textarea { min-height: 120px; resize: vertical; }
+        .form-field-hint {
+            font-size: 13px;
+            color: var(--text-secondary-color);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .form-field-hint code { background: #eee; padding: 2px 4px; border-radius: 4px; }
+        
+        /* ------------------------- */
+        /* --- ACTION BAR & SNACKBAR --- */
+        /* ------------------------- */
+        .action-bar {
+            position: sticky;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.9);
+            padding: 16px;
+            margin: 0 -16px -32px; /* Pull to edges */
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            text-align: right;
+        }
+        .btn-primary { background-color: var(--primary-color); color: var(--background-color); border: none; border-radius: 6px; padding: 12px 24px; font-weight: 600; cursor: pointer; }
+        
+        #snackbar {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 16px;
+        }
+        #snackbar.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+    </style>
+</head>
+<body>
+<div id="header-placeholder"></div>
+    <main class="main-container">
+        <h3 class="page-header">
+            <span class="material-symbols-outlined">notifications_active</span>
+            Communication Settings
+        </h3>
+
+        <form id="settings-form">
+            <div class="settings-card">
+                <h4>Overdue Payment Reminders</h4>
+                <div class="toggle-container">
+                    <label for="enable-reminders-checkbox" style="font-weight: 600;">Enable Automated Reminders</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="enable-reminders-checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div id="reminder-config-fields" class="config-fields">
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="first-reminder-days">Send first reminder</label>
+                            <input type="number" id="first-reminder-days" min="1" placeholder="e.g., 3">
+                        </div>
+                        <div class="form-field">
+                            <label for="second-reminder-days">Send second reminder</label>
+                            <input type="number" id="second-reminder-days" min="1" placeholder="e.g., 10">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h4>Customize Reminder Email</h4>
+                <div class="form-field">
+                    <label for="email-subject">Email Subject</label>
+                    <input type="text" id="email-subject" placeholder="e.g., Reminder: Your Bill is Due">
+                </div>
+                <div class="form-field">
+                    <label for="email-body">Email Body</label>
+                    <textarea id="email-body" placeholder="Write your reminder message here..."></textarea>
+                    <div class="form-field-hint">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">info</span>
+                        <span>Use placeholders: <code>{customer_name}</code>, <code>{biller_name}</code>, <code>{bill_number}</code>, <code>{bill_amount}</code>, <code>{due_date}</code></span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <div class="action-bar">
+        <button id="save-settings-btn" class="btn-primary">Save Settings</button>
+    </div>
+
+    <div id="snackbar">Settings saved successfully!</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- LOCALSTORAGE KEY ---
+            const SETTINGS_KEY = 'biller_reminder_settings';
+
+            // --- DOM REFERENCES ---
+            const form = document.getElementById('settings-form');
+            const enableRemindersToggle = document.getElementById('enable-reminders-checkbox');
+            const reminderConfigFields = document.getElementById('reminder-config-fields');
+            const firstReminderInput = document.getElementById('first-reminder-days');
+            const secondReminderInput = document.getElementById('second-reminder-days');
+            const emailSubjectInput = document.getElementById('email-subject');
+            const emailBodyInput = document.getElementById('email-body');
+            const saveBtn = document.getElementById('save-settings-btn');
+            const snackbar = document.getElementById('snackbar');
+
+            // --- FUNCTIONS ---
+            const toggleConfigVisibility = () => {
+                if (enableRemindersToggle.checked) {
+                    reminderConfigFields.classList.add('visible');
+                    // Add required attribute for validation
+                    firstReminderInput.required = true;
+                    secondReminderInput.required = true;
+                } else {
+                    reminderConfigFields.classList.remove('visible');
+                    // Remove required attribute
+                    firstReminderInput.required = false;
+                    secondReminderInput.required = false;
+                }
+            };
+
+            const loadSettings = () => {
+                const savedSettings = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+                if (savedSettings) {
+                    enableRemindersToggle.checked = savedSettings.isEnabled || false;
+                    firstReminderInput.value = savedSettings.firstReminderDays || '';
+                    secondReminderInput.value = savedSettings.secondReminderDays || '';
+                    emailSubjectInput.value = savedSettings.emailSubject || '';
+                    emailBodyInput.value = savedSettings.emailBody || '';
+                }
+                // Update UI based on loaded settings
+                toggleConfigVisibility();
+            };
+
+            const saveSettings = () => {
+                if (form.checkValidity() === false) {
+                    form.reportValidity();
+                    return;
+                }
+                
+                const settings = {
+                    isEnabled: enableRemindersToggle.checked,
+                    firstReminderDays: parseInt(firstReminderInput.value, 10) || null,
+                    secondReminderDays: parseInt(secondReminderInput.value, 10) || null,
+                    emailSubject: emailSubjectInput.value,
+                    emailBody: emailBodyInput.value
+                };
+
+                localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+                showSnackbar();
+            };
+
+            const showSnackbar = () => {
+                snackbar.className = "show";
+                setTimeout(() => { snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+            };
+
+            // --- EVENT LISTENERS ---
+            enableRemindersToggle.addEventListener('change', toggleConfigVisibility);
+            saveBtn.addEventListener('click', saveSettings);
+            
+            // --- INITIALIZATION ---
+            loadSettings();
+        });
+    </script>
+        <script>
+        fetch("header.html")
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById("header-placeholder").innerHTML = html;
+
+                // 🟢 NOW that header is injected, attach dropdown toggle
+                document.addEventListener('click', function (e) {
+                    const isDropdownBtn = e.target.closest('.dropdown-button');
+                    const dropdowns = document.querySelectorAll('.dropdown');
+
+                    dropdowns.forEach(drop => {
+                        if (drop.contains(e.target)) {
+                            if (isDropdownBtn) {
+                                drop.classList.toggle('open');
+                            }
+                        } else {
+                            drop.classList.remove('open');
+                        }
+                    });
+                });
+            });
+    </script>
+</body>
+</html>
