@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
+    
+    <!-- Fonts and Icons from Google CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+    <style>
+        /* ------------------------- */
+        /* --- DESIGN SYSTEM & SETUP --- */
+        /* ------------------------- */
+        :root {
+            /* Branding Colors */
+            --primary-color: #007a3d;
+            --text-primary-color: #212121;
+            --text-secondary-color: #6b6b6b;
+            --background-color: #ffffff;
+            --gradient-background: linear-gradient(135deg, #fdfcff, #f8f4f9, #f1f0ff);
+            --success-color: #2e7d32;
+
+            /* Typography */
+            --font-family-primary: 'Poppins', sans-serif;
+            --font-family-secondary: 'Open Sans', sans-serif;
+            --h3-font-size: 28px;
+            --body-font-size: 16px;
+
+            /* Layout & Components */
+            --card-border-radius: 8px;
+            --card-padding: 32px;
+            --button-border-radius: 6px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        .hidden { display: none !important; }
+
+        body {
+            font-family: var(--font-family-secondary);
+            background: var(--gradient-background);
+            color: var(--text-primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+        
+        /* ------------------------- */
+        /* --- CARD LAYOUT --- */
+        /* ------------------------- */
+        .card {
+            background: var(--background-color);
+            border-radius: var(--card-border-radius);
+            padding: var(--card-padding);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .card h3 {
+            font-family: var(--font-family-primary);
+            font-size: var(--h3-font-size);
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .card p.explanatory-text {
+            color: var(--text-secondary-color);
+            margin-bottom: 24px;
+            line-height: var(--body-line-height);
+        }
+        
+        /* ------------------------- */
+        /* --- FORM FIELDS --- */
+        /* ------------------------- */
+        .form-field {
+            position: relative;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-field .icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary-color);
+        }
+        .form-field input {
+            width: 100%;
+            padding: 12px 12px 12px 48px; /* Padding for icon */
+            border: 1px solid #ccc;
+            border-radius: var(--button-border-radius);
+            font-size: var(--body-font-size);
+            font-family: var(--font-family-secondary);
+        }
+        .form-field input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        .form-field .toggle-visibility {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 12px;
+            color: var(--text-secondary-color);
+        }
+
+        /* ------------------------- */
+        /* --- BUTTONS & LINKS --- */
+        /* ------------------------- */
+        .btn-full-width {
+            width: 100%;
+            border: none;
+            border-radius: var(--button-border-radius);
+            padding: 12px 24px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            background-color: var(--primary-color);
+            color: var(--background-color);
+        }
+        .btn-full-width:disabled {
+            background-color: #bdbdbd;
+            cursor: not-allowed;
+        }
+        
+        .navigation-link {
+            display: block;
+            margin-top: 24px;
+            font-size: 14px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .navigation-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Confirmation Message */
+        .confirmation-message {
+            background-color: #e8f5e9;
+            color: var(--success-color);
+            border-radius: var(--button-border-radius);
+            padding: 16px;
+            font-weight: 600;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <!-- Step 1: Forgot Password Form -->
+    <div id="forgot-password-card" class="card">
+        <h3>Forgot Your Password?</h3>
+        <p class="explanatory-text">No problem. Enter the email address associated with your account, and we will simulate sending you a reset link.</p>
+
+        <form id="forgot-form">
+            <div class="form-field">
+                <span class="material-symbols-outlined icon">mail</span>
+                <input type="email" id="forgot-email" placeholder="Email Address" required>
+            </div>
+            <button type="submit" id="send-link-btn" class="btn-full-width">Send Reset Link</button>
+        </form>
+        
+        <div id="confirmation-message" class="confirmation-message hidden" style="margin-top: 24px;">
+            If an account exists for this email, a reset link has been sent.
+        </div>
+
+        <a href="login.html" class="navigation-link">Back to Sign In</a>
+    </div>
+
+    <!-- Step 2: Reset Password Form -->
+    <div id="reset-password-card" class="card hidden">
+        <h3>Create a New Password</h3>
+
+        <form id="reset-form">
+            <div class="form-field">
+                 <span class="material-symbols-outlined icon">lock</span>
+                <input type="password" id="new-password" placeholder="New Password" required>
+                <button type="button" class="toggle-visibility" data-target="new-password">
+                    <span class="material-symbols-outlined">visibility_off</span>
+                </button>
+            </div>
+             <div class="form-field">
+                 <span class="material-symbols-outlined icon">lock</span>
+                <input type="password" id="confirm-password" placeholder="Confirm New Password" required>
+                <button type="button" class="toggle-visibility" data-target="confirm-password">
+                    <span class="material-symbols-outlined">visibility_off</span>
+                </button>
+            </div>
+            <button type="submit" id="save-password-btn" class="btn-full-width">Save New Password</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- DOM REFERENCES ---
+            const forgotCard = document.getElementById('forgot-password-card');
+            const resetCard = document.getElementById('reset-password-card');
+            
+            // Forgot Form
+            const forgotForm = document.getElementById('forgot-form');
+            const forgotEmailInput = document.getElementById('forgot-email');
+            const sendLinkBtn = document.getElementById('send-link-btn');
+            const confirmationMessage = document.getElementById('confirmation-message');
+            
+            // Reset Form
+            const resetForm = document.getElementById('reset-form');
+            const newPasswordInput = document.getElementById('new-password');
+            const confirmPasswordInput = document.getElementById('confirm-password');
+
+            // --- CORE LOGIC ---
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            const email = urlParams.get('email');
+
+            // Toggle visibility of forms based on URL parameters
+            if (token && email) {
+                forgotCard.classList.add('hidden');
+                resetCard.classList.remove('hidden');
+            } else {
+                forgotCard.classList.remove('hidden');
+                resetCard.classList.add('hidden');
+            }
+
+            // --- EVENT HANDLERS ---
+            
+            // Step 1: Forgot Password Form Submission
+            forgotForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const userEmail = forgotEmailInput.value;
+                if (!userEmail) return;
+
+                // --- Simulation ---
+                console.log(`Simulating sending reset link to: ${userEmail}`);
+                console.log(`In a real app, the link would be: ${window.location.href}?token=someGeneratedToken&email=${userEmail}`);
+                
+                // Hide form and show confirmation
+                forgotForm.classList.add('hidden');
+                confirmationMessage.classList.remove('hidden');
+            });
+            
+            // Step 2: Reset Password Form Submission
+            resetForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newPassword = newPasswordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+
+                if (newPassword.length < 8) {
+                    alert("Password must be at least 8 characters long.");
+                    return;
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    alert("Passwords do not match.");
+                    return;
+                }
+
+                // --- Simulation of updating the password ---
+                // In a real app, you would send the token and new password to the backend.
+                // Here, we just log it and redirect.
+                console.log(`Simulating password update for email: ${email}`);
+                console.log(`New password: ${newPassword}`);
+                
+                // Save a success message in localStorage for the login page to display
+                localStorage.setItem('passwordResetSuccess', 'Your password has been reset successfully. Please sign in.');
+
+                // Redirect to login page
+                window.location.href = 'login.html';
+            });
+            
+            // Generic toggle visibility handler for password fields
+            document.querySelectorAll('.toggle-visibility').forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.target;
+                    const input = document.getElementById(targetId);
+                    const icon = button.querySelector('.material-symbols-outlined');
+
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.textContent = 'visibility';
+                    } else {
+                        input.type = 'password';
+                        icon.textContent = 'visibility_off';
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>

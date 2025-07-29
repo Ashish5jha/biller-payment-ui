@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account</title>
+    
+    <!-- Fonts and Icons from Google CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+    <style>
+        /* ------------------------- */
+        /* --- DESIGN SYSTEM & SETUP --- */
+        /* ------------------------- */
+        :root {
+            /* Branding Colors */
+            --primary-color: #007a3d;
+            --text-primary-color: #212121;
+            --text-secondary-color: #6b6b6b;
+            --background-color: #ffffff;
+            --body-bg-color: #f7f7f7;
+            --border-color: #eeeeee;
+
+            /* Typography */
+            --font-family-primary: 'Poppins', sans-serif;
+            --font-family-secondary: 'Open Sans', sans-serif;
+            --h3-font-size: 28px;
+            --h4-font-size: 22px;
+            --body-font-size: 16px;
+
+            /* Layout & Components */
+            --max-width: 900px;
+            --card-border-radius: 8px;
+            --card-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            --card-padding: 24px;
+            --button-border-radius: 6px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-family-secondary);
+            background-color: var(--body-bg-color);
+            color: var(--text-primary-color);
+            line-height: 1.6;
+            font-size: var(--body-font-size);
+            padding: 32px 16px;
+        }
+        
+        /* ------------------------- */
+        /* --- MAIN LAYOUT --- */
+        /* ------------------------- */
+        .main-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        .page-header {
+            font-family: var(--font-family-primary);
+            font-size: var(--h3-font-size);
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        .account-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 24px;
+        }
+        
+        .card {
+            background: var(--background-color);
+            border-radius: var(--card-border-radius);
+            box-shadow: var(--card-box-shadow);
+            padding: var(--card-padding);
+        }
+        .card h4 {
+            font-family: var(--font-family-primary);
+            font-size: var(--h4-font-size);
+            font-weight: 600;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card h4 .material-symbols-outlined {
+            color: var(--primary-color);
+        }
+
+        /* ------------------------- */
+        /* --- PROFILE DETAILS & CHIPS --- */
+        /* ------------------------- */
+        .profile-item {
+            margin-bottom: 16px;
+        }
+        .profile-item .label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary-color);
+            display: block;
+            margin-bottom: 4px;
+        }
+        .profile-item .value {
+            font-size: 16px;
+        }
+        .chip-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+        .chip {
+            background-color: var(--border-color);
+            color: var(--text-secondary-color);
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* ------------------------- */
+        /* --- CHANGE PASSWORD FORM --- */
+        /* ------------------------- */
+        .form-field {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .form-field input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: var(--button-border-radius);
+            font-size: var(--body-font-size);
+            font-family: var(--font-family-secondary);
+        }
+        .form-field input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        .form-field .toggle-visibility {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 12px;
+            color: var(--text-secondary-color);
+        }
+        .action-bar {
+            margin-top: 24px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 24px;
+        }
+        .btn-update {
+            width: 100%;
+            border: none;
+            border-radius: var(--button-border-radius);
+            padding: 12px 24px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: var(--primary-color);
+            color: var(--background-color);
+        }
+        .btn-update:disabled {
+            background-color: #bdbdbd;
+            cursor: not-allowed;
+        }
+        
+        /* ------------------------- */
+        /* --- SNACKBAR & RESPONSIVENESS --- */
+        /* ------------------------- */
+        #snackbar {
+            visibility: hidden; min-width: 250px; background-color: #333; color: #fff;
+            text-align: center; border-radius: 4px; padding: 16px; position: fixed; z-index: 1;
+            left: 50%; bottom: 30px; transform: translateX(-50%);
+        }
+        #snackbar.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        
+        @media (max-width: 768px) {
+            .account-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="main-container">
+        <h3 class="page-header">My Account Settings</h3>
+        <div class="account-grid">
+            <!-- Card 1: Profile Details -->
+            <div class="card">
+                <h4>
+                    <span class="material-symbols-outlined">person</span>
+                    Profile Details
+                </h4>
+                <div id="profile-details-content">
+                    <!-- JS will populate this -->
+                </div>
+            </div>
+
+            <!-- Card 2: Change Password -->
+            <div class="card">
+                <h4>
+                    <span class="material-symbols-outlined">lock_reset</span>
+                    Security
+                </h4>
+                <form id="password-form">
+                    <div class="form-field">
+                        <label for="current-password">Current Password</label>
+                        <input type="password" id="current-password" required>
+                        <button type="button" class="toggle-visibility" data-target="current-password">
+                            <span class="material-symbols-outlined">visibility_off</span>
+                        </button>
+                    </div>
+                    <div class="form-field">
+                        <label for="new-password">New Password</label>
+                        <input type="password" id="new-password" required>
+                        <button type="button" class="toggle-visibility" data-target="new-password">
+                            <span class="material-symbols-outlined">visibility_off</span>
+                        </button>
+                    </div>
+                    <div class="form-field">
+                        <label for="confirm-password">Confirm New Password</label>
+                        <input type="password" id="confirm-password" required>
+                        <button type="button" class="toggle-visibility" data-target="confirm-password">
+                            <span class="material-symbols-outlined">visibility_off</span>
+                        </button>
+                    </div>
+                    <div class="action-bar">
+                        <button type="submit" id="update-password-btn" class="btn-update" disabled>Update Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    
+    <div id="snackbar">Password updated successfully!</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- MOCK USER DATA (for demo) ---
+            // In a real app, you'd have a full user list in localStorage.
+            // We'll simulate that, including a logged-in user.
+            const MOCK_USERS = {
+                'admin@svl.com': { name: 'Admin User', password: 'password123', roles: ['SVL Administrator', 'Manager'] },
+                'biller@kingstonmart.com': { name: 'Biller User', password: 'password123', roles: ['Biller'] }
+            };
+            // Simulate a user is logged in
+            const loggedInUserEmail = 'admin@svl.com';
+            const loggedInUser = { email: loggedInUserEmail, ...MOCK_USERS[loggedInUserEmail] };
+            
+            // --- DOM REFERENCES ---
+            const profileDetailsContent = document.getElementById('profile-details-content');
+            const passwordForm = document.getElementById('password-form');
+            const currentPasswordInput = document.getElementById('current-password');
+            const newPasswordInput = document.getElementById('new-password');
+            const confirmPasswordInput = document.getElementById('confirm-password');
+            const updatePasswordBtn = document.getElementById('update-password-btn');
+            const snackbar = document.getElementById('snackbar');
+
+            // --- FUNCTIONS ---
+            const renderProfileDetails = () => {
+                const rolesHTML = loggedInUser.roles.map(role => `<span class="chip">${role}</span>`).join('');
+                profileDetailsContent.innerHTML = `
+                    <div class="profile-item">
+                        <span class="label">Full Name</span>
+                        <span class="value">${loggedInUser.name}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="label">Email Address</span>
+                        <span class="value">${loggedInUser.email}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="label">Assigned Roles</span>
+                        <div class="chip-list">${rolesHTML}</div>
+                    </div>
+                `;
+            };
+
+            const checkFormValidity = () => {
+                const isCurrentPwdFilled = currentPasswordInput.value.trim() !== '';
+                const isNewPwdFilled = newPasswordInput.value.trim() !== '';
+                const doPasswordsMatch = newPasswordInput.value === confirmPasswordInput.value;
+                
+                updatePasswordBtn.disabled = !(isCurrentPwdFilled && isNewPwdFilled && doPasswordsMatch);
+            };
+
+            const handlePasswordUpdate = (e) => {
+                e.preventDefault();
+                
+                // 1. Validate current password
+                if (currentPasswordInput.value !== loggedInUser.password) {
+                    alert("Error: Your current password is incorrect.");
+                    return;
+                }
+                
+                // 2. Update the "database" (our mock object)
+                const newPassword = newPasswordInput.value;
+                MOCK_USERS[loggedInUser.email].password = newPassword;
+                loggedInUser.password = newPassword; // Update our session object too
+                
+                console.log('Updated user data in mock DB:', MOCK_USERS);
+                
+                // 3. Show success and reset form
+                showSnackbar();
+                passwordForm.reset();
+                checkFormValidity();
+            };
+
+            const showSnackbar = () => {
+                snackbar.className = "show";
+                setTimeout(() => { snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+            };
+
+            // --- EVENT LISTENERS ---
+            passwordForm.addEventListener('input', checkFormValidity);
+            passwordForm.addEventListener('submit', handlePasswordUpdate);
+
+            document.querySelectorAll('.toggle-visibility').forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.target;
+                    const input = document.getElementById(targetId);
+                    const icon = button.querySelector('.material-symbols-outlined');
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.textContent = 'visibility';
+                    } else {
+                        input.type = 'password';
+                        icon.textContent = 'visibility_off';
+                    }
+                });
+            });
+
+            // --- INITIALIZATION ---
+            renderProfileDetails();
+        });
+    </script>
+</body>
+</html>

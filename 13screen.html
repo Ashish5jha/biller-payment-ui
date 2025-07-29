@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bulk Bill Import</title>
-    
+
     <!-- Fonts and Icons from Google CDN -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        rel="stylesheet" />
 
     <style>
         /* ------------------------- */
@@ -41,7 +46,11 @@
             --button-border-radius: 6px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: var(--font-family-secondary);
@@ -51,8 +60,10 @@
             font-size: var(--body-font-size);
             padding: 32px 16px;
         }
-        
-        .hidden { display: none !important; }
+
+        .hidden {
+            display: none !important;
+        }
 
         /* ------------------------- */
         /* --- MAIN LAYOUT & CARDS --- */
@@ -61,6 +72,7 @@
             max-width: var(--max-width);
             margin: 0 auto;
         }
+
         .page-header {
             font-family: var(--font-family-primary);
             font-size: var(--h3-font-size);
@@ -70,7 +82,12 @@
             align-items: center;
             gap: 12px;
         }
-        .page-header .material-symbols-outlined { font-size: 32px; color: var(--primary-color); }
+
+        .page-header .material-symbols-outlined {
+            font-size: 32px;
+            color: var(--primary-color);
+        }
+
         .step-card {
             background: var(--background-color);
             border-radius: var(--card-border-radius);
@@ -81,49 +98,137 @@
             align-items: flex-start;
             gap: 20px;
         }
+
         .step-card .icon {
             color: var(--primary-color);
             font-size: 36px;
             margin-top: 4px;
         }
-        .step-card .content h4 { font-family: var(--font-family-primary); font-weight: 600; font-size: 20px; }
-        .step-card .content p { color: var(--text-secondary-color); margin: 8px 0 16px; }
-        
+
+        .step-card .content h4 {
+            font-family: var(--font-family-primary);
+            font-weight: 600;
+            font-size: 20px;
+        }
+
+        .step-card .content p {
+            color: var(--text-secondary-color);
+            margin: 8px 0 16px;
+        }
+
         /* ------------------------- */
         /* --- BUTTONS --- */
         /* ------------------------- */
         .btn {
-            border: none; border-radius: var(--button-border-radius); padding: 12px 24px;
-            font-family: var(--font-family-secondary); font-weight: 600; font-size: 16px;
-            cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
-            gap: 8px; transition: opacity 0.3s;
+            border: none;
+            border-radius: var(--button-border-radius);
+            padding: 12px 24px;
+            font-family: var(--font-family-secondary);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.3s;
         }
-        .btn:hover { opacity: 0.9; }
-        .btn:disabled { background-color: var(--disabled-color); cursor: not-allowed; }
-        .btn-primary { background-color: var(--primary-color); color: var(--background-color); }
-        .btn-stroked { background-color: transparent; color: var(--text-primary-color); border: 1px solid #ccc; }
-        
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:disabled {
+            background-color: var(--disabled-color);
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+        }
+
+        .btn-stroked {
+            background-color: transparent;
+            color: var(--text-primary-color);
+            border: 1px solid #ccc;
+        }
+
         /* ------------------------- */
         /* --- FILE INPUT & PREVIEW TABLE --- */
         /* ------------------------- */
-        #upload-input { display: none; }
-        #results-summary { margin-bottom: 16px; padding: 12px; border-radius: 4px; }
-        #results-summary.success { background-color: #e8f5e9; color: var(--success-color); }
-        #results-summary.error { background-color: #ffebee; color: var(--error-color); }
-        .table-container { width: 100%; overflow-x: auto; max-height: 400px; }
-        .preview-table { width: 100%; border-collapse: collapse; }
-        .preview-table th, .preview-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); }
-        .preview-table th { font-weight: 600; color: var(--text-secondary-color); font-size: 14px; }
-        .preview-table td .status-icon { font-size: 20px; }
-        .preview-table td .status-icon.valid { color: var(--success-color); }
-        .preview-table td .status-icon.invalid { color: var(--error-color); }
-        .error-message { font-size: 12px; color: var(--error-color); }
-        .action-bar { display: flex; justify-content: flex-end; gap: 16px; margin-top: 24px; }
+        #upload-input {
+            display: none;
+        }
 
+        #results-summary {
+            margin-bottom: 16px;
+            padding: 12px;
+            border-radius: 4px;
+        }
+
+        #results-summary.success {
+            background-color: #e8f5e9;
+            color: var(--success-color);
+        }
+
+        #results-summary.error {
+            background-color: #ffebee;
+            color: var(--error-color);
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            max-height: 400px;
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .preview-table th,
+        .preview-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .preview-table th {
+            font-weight: 600;
+            color: var(--text-secondary-color);
+            font-size: 14px;
+        }
+
+        .preview-table td .status-icon {
+            font-size: 20px;
+        }
+
+        .preview-table td .status-icon.valid {
+            color: var(--success-color);
+        }
+
+        .preview-table td .status-icon.invalid {
+            color: var(--error-color);
+        }
+
+        .error-message {
+            font-size: 12px;
+            color: var(--error-color);
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+            margin-top: 24px;
+        }
     </style>
 </head>
+
 <body>
-<div id="header-placeholder"></div>
+    <div id="header-placeholder"></div>
     <main class="main-container">
         <h3 class="page-header">
             <span class="material-symbols-outlined">upload_file</span>
@@ -135,7 +240,8 @@
             <span class="icon material-symbols-outlined">file_download</span>
             <div class="content">
                 <h4>Step 1: Download Template</h4>
-                <p>Start by downloading our standardized CSV template. The required columns are: <strong>CustomerID, BillNumber, Amount, DueDate</strong>.</p>
+                <p>Start by downloading our standardized CSV template. The required columns are: <strong>CustomerID,
+                        BillNumber, Amount, DueDate</strong>.</p>
                 <button id="download-template-btn" class="btn btn-stroked">Download .CSV Template</button>
             </div>
         </div>
@@ -202,11 +308,11 @@
             // --- DATA MANAGEMENT & SYNC ---
             const getData = (key) => JSON.parse(localStorage.getItem(key) || '[]');
             const saveData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
-            
+
             const logActivity = (message, icon = 'info') => {
                 const activityLog = getData(ACTIVITY_KEY);
                 activityLog.unshift({ icon, message, timestamp: new Date().toISOString() });
-                if (activityLog.length > 20) activityLog.pop(); 
+                if (activityLog.length > 20) activityLog.pop();
                 saveData(ACTIVITY_KEY, activityLog);
             };
 
@@ -228,7 +334,7 @@
                 if (!file) return;
 
                 fileNameDisplay.textContent = `Selected file: ${file.name}`;
-                
+
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const text = e.target.result;
@@ -256,7 +362,7 @@
                 validateData(parsedData, existingCustomerIds);
                 renderPreview();
             };
-            
+
             const validateData = (data, existingCustomerIds) => {
                 data.forEach(bill => {
                     if (!bill.customerId || !bill.billNumber || !bill.amount || !bill.dueDate) {
@@ -271,7 +377,7 @@
                         bill._validation = { isValid: false, message: 'Invalid DueDate format (use YYYY-MM-DD).' };
                         return;
                     }
-                    
+
                     bill._validation = { isValid: true, message: 'Ready to import' };
                 });
             };
@@ -279,14 +385,14 @@
             const renderPreview = () => {
                 previewTableBody.innerHTML = '';
                 let validCount = 0;
-                
+
                 parsedData.forEach(bill => {
                     if (bill._validation.isValid) validCount++;
-                    
+
                     const statusIcon = bill._validation.isValid
                         ? `<span class="material-symbols-outlined status-icon valid" title="Valid">check_circle</span>`
                         : `<span class="material-symbols-outlined status-icon invalid" title="${bill._validation.message}">error</span>`;
-                        
+
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${statusIcon}</td>
@@ -302,7 +408,7 @@
                         previewTableBody.appendChild(row);
                         previewTableBody.appendChild(errorRow);
                     } else {
-                         previewTableBody.appendChild(row);
+                        previewTableBody.appendChild(row);
                     }
                 });
 
@@ -324,7 +430,7 @@
                 if (validBills.length === 0) return;
 
                 const existingBills = getData(BILL_KEY);
-                
+
                 const newBills = validBills.map(b => ({
                     id: 'b' + Date.now() + Math.random(),
                     billerId: 'biller123', // Assume a logged-in biller
@@ -338,7 +444,7 @@
                 const updatedBills = [...existingBills, ...newBills];
                 saveData(BILL_KEY, updatedBills);
                 logActivity(`${validBills.length} new bills were imported via bulk upload.`, 'upload_file');
-                
+
                 alert(`${validBills.length} bills imported successfully!`);
                 // In a real app, navigate back to the bill management screen
                 window.location.href = 'bill-management.html';
@@ -360,7 +466,7 @@
 
         });
     </script>
-        <script>
+     <script>
         fetch("header.html")
             .then(res => res.text())
             .then(html => {
@@ -384,4 +490,5 @@
             });
     </script>
 </body>
+
 </html>
