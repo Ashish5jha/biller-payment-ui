@@ -32,15 +32,15 @@ class AuthController extends Controller
 
         // Create user
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
+            'name'      => $request->name,
+            'email'     => $request->email,
+            'password'  => Hash::make($request->password),
         ]);
 
         return response()->json([
-            'status' => true,
+            'status'  => true,
             'message' => 'User registered successfully!',
-            'data' => $user
+            'data'    => $user
         ], 201);
     }
 
@@ -48,8 +48,8 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-           'email' => 'required|email',
-           'password' => 'required|string',
+            'email' => 'required|email',
+            'password' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -98,7 +98,6 @@ class AuthController extends Controller
             ], 422);
         }
         
-
         $email = $request->email;
         $token = Str::random(60);
 
@@ -120,6 +119,44 @@ class AuthController extends Controller
                 'email' => $email,
                 'token' => $token
             ]
+        ]);
+    }
+
+    // ✅ Change Password API (Authenticated)
+    public function changePassword(Request $request)
+    {
+        // 1. Get the authenticated user
+        $user = Auth::user();
+
+        // 2. Validate the request data
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required',
+            'new_password' => 'required|string|min:6|confirmed', // 'confirmed' checks for 'new_password_confirmation'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // 3. Verify that the current password is correct
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'The provided current password does not match our records.'
+            ], 401);
+        }
+
+        // 4. Update the password in the database
+        $user->update([
+            'password' => Hash::make($request->new_password)
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Password changed successfully.'
         ]);
     }
 }
