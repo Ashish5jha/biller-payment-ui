@@ -97,6 +97,7 @@ class AuthController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
+        
 
         $email = $request->email;
         $token = Str::random(60);
