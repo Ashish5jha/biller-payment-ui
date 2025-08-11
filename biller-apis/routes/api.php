@@ -8,6 +8,7 @@ use App\Http\Controllers\ModulesController;
 use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\BillersController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/health', [HealthCheckController::class, 'check']);
@@ -49,6 +50,11 @@ Route::delete('/users/{id}', [UsersController::class, 'destroy']);          // D
 
 
 
-
+Route::get('/billers', [BillersController::class, 'index']);                     // Get all billers
+Route::post('/billers', [BillersController::class, 'store']);                   // Onboard new biller
+Route::get('/billers/{id}', [BillersController::class, 'show']);                // Get single biller
+Route::put('/billers/{id}', [BillersController::class, 'update']);              // Update biller
+Route::patch('/billers/{id}/status', [BillersController::class, 'updateStatus']); // Update biller status
+Route::delete('/billers/{id}', [BillersController::class, 'destroy']);          // Delete biller
 
 
