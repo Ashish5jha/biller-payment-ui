@@ -10,6 +10,7 @@ use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\BillersController;
 use App\Http\Controllers\CustomersController;
+use App\Http\Controllers\BillsController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/health', [HealthCheckController::class, 'check']);
@@ -70,5 +71,12 @@ Route::post('/customers/bulk-import', [CustomersController::class, 'bulkImport']
 
 
 
-
+Route::get('/bills', [BillsController::class, 'index']);                        // Get all bills
+Route::get('/bills/{id}', [BillsController::class, 'show']);                   // Get single bill
+Route::post('/bills/assign', [BillsController::class, 'assignBill']);          // Assign bill (general)
+Route::put('/bills/{id}', [BillsController::class, 'update']);                 // Update bill
+Route::delete('/bills/{id}', [BillsController::class, 'destroy']);             // Delete bill
+Route::patch('/bills/{id}/status', [BillsController::class, 'updateStatus']);  // Update bill status
+Route::get('/customers/{id}/bills', [BillsController::class, 'getCustomerBills']); // Get bills for specific customer
+Route::post('/customers/{id}/assign-bill', [CustomersController::class, 'assignBill']); // Assign bill to specific customer
 
