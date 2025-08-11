@@ -17,4 +17,27 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/modules/add-module', [ModulesController::class, 'store']);
+// Module routes - Only 3 functionalities
+Route::get('/modules', [ModulesController::class, 'index']);           // Get all modules
+Route::post('/modules/add-module', [ModulesController::class, 'store']);          // Add module
+Route::put('/modules/{id}', [ModulesController::class, 'update']);     // Edit module
+Route::delete('/modules/{id}', [ModulesController::class, 'destroy']);     // Delete module
+
+
+// Permission routes - Only 3 functionalities
+Route::get('/permissions', [PermissionsController::class, 'index']);           // Get all permissions
+Route::post('/permissions', [PermissionsController::class, 'store']);          // Add permission
+Route::put('/permissions/{id}', [PermissionsController::class, 'update']);     // Edit permission
+Route::delete('/permissions/{id}', [PermissionsController::class, 'destroy']); // Delete permission
+
+
+
+
+
+
+
+
+
+
+
+

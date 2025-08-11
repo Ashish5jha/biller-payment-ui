@@ -55,9 +55,7 @@ class ModulesController extends Controller
         ], 201);
     }
 
-    /**
-     * Update the specified module.
-     */
+  
     public function update(Request $request, $id)
     {
         $module = Module::find($id);
@@ -65,17 +63,17 @@ class ModulesController extends Controller
         if (!$module) {
             return response()->json(['message' => 'Module not found'], 404);
         }
-
-        // Validation (excluding current module from unique check)
+    
+        // Validation for partial updates - all fields are optional
         $validatedData = $request->validate([
-            'name' => 'required|string|max:100|unique:modules,name,' . $id,
-            'description' => 'nullable|string',
-            'sort_order' => 'required|integer',
+            'name' => 'sometimes|required|string|max:100|unique:modules,name,' . $id,
+            'description' => 'sometimes|nullable|string',
+            'sort_order' => 'sometimes|required|integer',
         ]);
-
-        // Update the module
+    
+        // Update only the fields that were provided
         $module->update($validatedData);
-
+    
         return response()->json([
             'message' => 'Module updated successfully',
             'data' => $module
