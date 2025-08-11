@@ -9,6 +9,7 @@ use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\BillersController;
+use App\Http\Controllers\CustomersController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/health', [HealthCheckController::class, 'check']);
@@ -56,5 +57,18 @@ Route::get('/billers/{id}', [BillersController::class, 'show']);                
 Route::put('/billers/{id}', [BillersController::class, 'update']);              // Update biller
 Route::patch('/billers/{id}/status', [BillersController::class, 'updateStatus']); // Update biller status
 Route::delete('/billers/{id}', [BillersController::class, 'destroy']);          // Delete biller
+
+// Customer routes - 5 basic operations
+Route::get('/customers', [CustomersController::class, 'index']);                // Get all customers
+Route::get('/customers/{id}', [CustomersController::class, 'show']);           // Get single customer
+Route::post('/customers', [CustomersController::class, 'store']);              // Add customer
+Route::put('/customers/{id}', [CustomersController::class, 'update']);         // Edit customer
+Route::delete('/customers/{id}', [CustomersController::class, 'destroy']);     // Delete customer
+
+// Customer bulk import (placeholder for future implementation)
+Route::post('/customers/bulk-import', [CustomersController::class, 'bulkImport']); // Bulk import from CSV
+
+
+
 
 
