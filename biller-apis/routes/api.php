@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HealthCheckController;
 use App\Http\Controllers\ModulesController;
 use App\Http\Controllers\PermissionsController;
+use App\Http\Controllers\RolesController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/health', [HealthCheckController::class, 'check']);
@@ -31,7 +32,11 @@ Route::post('/permissions', [PermissionsController::class, 'store']);          /
 Route::put('/permissions/{id}', [PermissionsController::class, 'update']);     // Edit permission
 Route::delete('/permissions/{id}', [PermissionsController::class, 'destroy']); // Delete permission
 
-
+// Role routes
+Route::get('/roles', [RolesController::class, 'index']);           // Get all roles
+Route::post('/roles', [RolesController::class, 'store']);          // Add role
+Route::put('/roles/{id}', [RolesController::class, 'update']);     // Edit role
+Route::delete('/roles/{id}', [RolesController::class, 'destroy']); // Delete role
 
 
 
