@@ -7,6 +7,7 @@ use App\Http\Controllers\HealthCheckController;
 use App\Http\Controllers\ModulesController;
 use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\RolesController;
+use App\Http\Controllers\UsersController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/health', [HealthCheckController::class, 'check']);
@@ -39,8 +40,12 @@ Route::put('/roles/{id}', [RolesController::class, 'update']);     // Edit role
 Route::delete('/roles/{id}', [RolesController::class, 'destroy']); // Delete role
 
 
-
-
+// User routes
+Route::get('/users', [UsersController::class, 'index']);                    // Get all users
+Route::post('/users', [UsersController::class, 'store']);                   // Add user
+Route::put('/users/{id}', [UsersController::class, 'update']);              // Edit user
+Route::patch('/users/{id}/toggle-status', [UsersController::class, 'toggleStatus']); // Toggle user status
+Route::delete('/users/{id}', [UsersController::class, 'destroy']);          // Delete user
 
 
 
