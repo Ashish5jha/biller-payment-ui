@@ -14,4 +14,10 @@ class Module extends Model
         'description',
         'sort_order',
     ];
+
+    // Relationship with Permissions
+    public function permissions()
+    {
+        return $this->hasMany(Permission::class);
+    }
 }

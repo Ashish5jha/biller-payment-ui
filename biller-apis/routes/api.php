@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HealthCheckController;
 use App\Http\Controllers\ModulesController;
+use App\Http\Controllers\PermissionsController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/health', [HealthCheckController::class, 'check']);

@@ -87,4 +87,19 @@ class PermissionsController extends Controller
             'data' => $permission
         ], 200);
     }
+
+      public function destroy($id)
+    {
+        $permission = Permission::find($id);
+        
+        if (!$permission) {
+            return response()->json(['message' => 'Permission not found'], 404);
+        }
+
+        $permission->delete();
+
+        return response()->json([
+            'message' => 'Permission deleted successfully'
+        ], 200);
+    }
 }
